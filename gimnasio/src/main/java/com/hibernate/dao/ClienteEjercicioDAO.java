@@ -6,20 +6,21 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import com.hibernate.model.CE;
 import com.hibernate.model.Ejercicio;
 import com.hibernate.util.HibernateUtil;
 
 
 
-public class EjercicioDAO {
+public class ClienteEjercicioDAO {
 
 	
 	
-	public static void insertEjercicio(Ejercicio ej) {
+	public static void insertCE(CE ce) {
 		Transaction transaction = null;
 		try (Session session=HibernateUtil.getSessionFactory().openSession()) {
 			transaction = session.beginTransaction();
-			session.persist(ej);
+			session.persist(ce);
 			transaction.commit();
 		} catch (Exception e) {
 			if(transaction!=null) {
@@ -28,11 +29,11 @@ public class EjercicioDAO {
 		}
 	}
 	
-	public static void updateEjercicio(Ejercicio ej) {
+	public static void updateEjercicio(CE ce) {
 		Transaction transaction = null;
 		try (Session session=HibernateUtil.getSessionFactory().openSession()) {
 			transaction = session.beginTransaction();
-			session.merge(ej);
+			session.merge(ce);
 			transaction.commit();
 		} catch (Exception e) {
 			if(transaction!=null) {
@@ -56,29 +57,29 @@ public class EjercicioDAO {
 		}
 	}
 	
-	public static Ejercicio selectEjercicioByID(int id) {
+	public static CE selectEjercicioByID(int id) {
 		Transaction transaction = null;
-		Ejercicio ej = null;
+		CE ce = null;
 		try (Session session=HibernateUtil.getSessionFactory().openSession()) {
 			transaction = session.beginTransaction();
-			Query<Ejercicio> query = session.createQuery("FROM Ejercicio WHERE id = :id",Ejercicio.class);
+			Query<CE> query = session.createQuery("FROM CE WHERE id = :id",CE.class);
 			query.setParameter("id",id);
-			ej=query.uniqueResult();
+			ce=query.uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {
 			if(transaction!=null) {
 				transaction.rollback();
 			}
 		}
-		return ej;
+		return ce;
 	}
 	
-	public static List<Ejercicio> selectAllEjercicios() {
+	public static List<CE> selectAllCES() {
 		Transaction transaction = null;
-		List<Ejercicio> ejercicios = null;
+		List<CE> ejercicios = null;
 		try (Session session=HibernateUtil.getSessionFactory().openSession()) {
 			transaction = session.beginTransaction();
-			ejercicios=session.createQuery("FROM Ejercicio", Ejercicio.class).getResultList();
+			ejercicios=session.createQuery("FROM CE", CE.class).getResultList();
 			transaction.commit();
 		} catch (Exception e) {
 			if(transaction!=null) {

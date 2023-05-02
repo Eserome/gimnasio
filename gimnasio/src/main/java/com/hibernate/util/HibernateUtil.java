@@ -8,7 +8,9 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
 
+import com.hibernate.model.CE;
 import com.hibernate.model.Cliente;
+import com.hibernate.model.Ejercicio;
 
 public class HibernateUtil {
 	private static SessionFactory sessionFactory;
@@ -29,6 +31,8 @@ public class HibernateUtil {
 				configuration.setProperties(settings);
 				
 				configuration.addAnnotatedClass(Cliente.class);
+				configuration.addAnnotatedClass(Ejercicio.class);
+				configuration.addAnnotatedClass(CE.class);
 				
 				ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
 				
