@@ -33,9 +33,8 @@ public class Ejercicio {
 		super();
 	}
 
-	public Ejercicio(int id, String nombre, int numeroDeSeries, int repeticiones, int cargaEnKg) {
+	public Ejercicio(String nombre, int numeroDeSeries, int repeticiones, int cargaEnKg) {
 		super();
-		this.id = id;
 		this.nombre = nombre;
 		this.numeroDeSeries = numeroDeSeries;
 		this.repeticiones = repeticiones;

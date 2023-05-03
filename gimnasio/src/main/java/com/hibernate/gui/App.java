@@ -32,16 +32,27 @@ import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.JComboBox;
+import javax.swing.JSeparator;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 
 
 public class App {
 
 	private JFrame frame;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
+	private JTextField textField_series;
+	private JTextField textField_repeticiones;
+	private JTextField textField_cargaEnKg;
+	private JTextField textField_nombreEjercicio;
+	private JTextField textField_nombreCliente;
+	private JTextField textField_apellidosCliente;
+	private JTextField textField_edad;
+	private JTextField textField_altura;
+	private JTextField textField_peso;
+	private JTextField textField_idCliente;
+	private JTextField textField_idEjercicio;
+	private JTextField textField_cliente1;
 	
 
 	
@@ -75,7 +86,7 @@ public class App {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 1400, 700);
+		frame.setBounds(100, 100, 1600, 700);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
@@ -116,13 +127,15 @@ public class App {
 			public void mouseClicked(MouseEvent e) {
 				int index = tablaEjercicios.getSelectedRow();
 				TableModel model = tablaEjercicios.getModel();
-				/*
-				textField.setText(model.getValueAt(index, 0).toString());
-				textField_Serie.setText(model.getValueAt(index, 1).toString());
-				textField_Temporadas.setText(model.getValueAt(index, 2).toString());
-				textField_Episodios.setText(model.getValueAt(index, 3).toString());
+				textField_idEjercicio.setText(model.getValueAt(index, 0).toString());
+				textField_nombreEjercicio.setText(model.getValueAt(index, 1).toString());
+				textField_series.setText(model.getValueAt(index, 2).toString());
+				textField_repeticiones.setText(model.getValueAt(index, 3).toString());
+				textField_cargaEnKg.setText(model.getValueAt(index, 4).toString());
 				
-				*/
+				
+				
+				
 			}
 		});
 		
@@ -140,13 +153,14 @@ public class App {
 			public void mouseClicked(MouseEvent e) {
 				int index = tablaClientes.getSelectedRow();
 				TableModel model = tablaClientes.getModel();
-				/*
-				textField.setText(model.getValueAt(index, 0).toString());
-				textField_Serie.setText(model.getValueAt(index, 1).toString());
-				textField_Temporadas.setText(model.getValueAt(index, 2).toString());
-				textField_Episodios.setText(model.getValueAt(index, 3).toString());
 				
-				*/
+				textField_idCliente.setText(model.getValueAt(index, 0).toString());
+				textField_nombreCliente.setText(model.getValueAt(index, 1).toString());
+				textField_apellidosCliente.setText(model.getValueAt(index, 2).toString());
+				textField_edad.setText(model.getValueAt(index, 3).toString());
+				textField_altura.setText(model.getValueAt(index, 4).toString());
+				textField_peso.setText(model.getValueAt(index, 5).toString());
+				
 			}
 		});
 		
@@ -175,9 +189,26 @@ public class App {
 		frame.getContentPane().add(scrollPaneEjercicios);
 		
 		JScrollPane scrollPaneCE = new JScrollPane(tablaCE);
-		scrollPaneCE.setBounds(1152, 32, 224, 182);
+		scrollPaneCE.setBounds(1152, 32, 290, 182);
 		frame.getContentPane().add(scrollPaneCE);
 		
+		JComboBox comboBox_MostrarClientes = new JComboBox();
+		comboBox_MostrarClientes.setBounds(262, 348, 59, 24);
+		frame.getContentPane().add(comboBox_MostrarClientes);
+		
+		JComboBox comboBox_clienteId = new JComboBox();
+		
+		comboBox_clienteId.setBounds(1152, 226, 144, 24);
+		frame.getContentPane().add(comboBox_clienteId);
+				
+		JComboBox comboBox_MostrarEjercicios = new JComboBox();
+		comboBox_MostrarEjercicios.setBounds(1308, 226, 134, 24);
+		frame.getContentPane().add(comboBox_MostrarEjercicios);
+		
+		textField_cliente1 = new JTextField();
+		textField_cliente1.setColumns(10);
+		textField_cliente1.setBounds(335, 349, 134, 24);
+		frame.getContentPane().add(textField_cliente1);
 		
 		JButton btnActualizarTabla = new JButton("");
 		btnActualizarTabla.addActionListener(new ActionListener() {
@@ -213,6 +244,24 @@ public class App {
 					row[1] = ce.getEjercicio_id();
 					modelCE.addRow(row);
 				}
+				
+				comboBox_MostrarClientes.removeAllItems();
+				comboBox_clienteId.removeAllItems();
+				comboBox_MostrarEjercicios.removeAllItems();
+			
+				List<Cliente> clientesId = ClienteDAO.selectAllClientes();
+				for(Cliente c: clientesId) {
+					comboBox_MostrarClientes.addItem(c.getId() + ":" + c.getNombre());
+
+					comboBox_clienteId.addItem(c.getId() + ":" + c.getNombre());
+					
+				}
+				
+				List<Ejercicio> ejerciciosId = EjercicioDAO.selectAllEjercicios();
+				for(Ejercicio ej: ejerciciosId) {
+					comboBox_MostrarEjercicios.addItem(ej.getId() + ":" + ej.getNombre());
+				}
+				
 			}
 		});
 		btnActualizarTabla.setBounds(1271, 626, 117, 25);
@@ -220,15 +269,16 @@ public class App {
 		btnActualizarTabla.setVisible(false);
 		btnActualizarTabla.doClick();
 		
+		
 		JButton btnGuardar = new JButton("Añadir");
 		btnGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					/*
-					Cliente s = new Cliente(textField_Serie.getText(),Integer.parseInt(textField_Temporadas.getText()), Integer.parseInt(textField_Episodios.getText()));
+					
+					Cliente s = new Cliente(textField_nombreCliente.getText(),textField_apellidosCliente.getText(), Integer.parseInt(textField_edad.getText()),Double.parseDouble(textField_altura.getText()),Integer.parseInt(textField_peso.getText()));
 					ClienteDAO.insertCliente(s);
 					btnActualizarTabla.doClick();
-					*/
+					
 				} catch (Exception e) {
 					System.out.println(e);
 				}
@@ -242,14 +292,16 @@ public class App {
 		btnActualizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					/*
-					Cliente s = ClienteDAO.selectSerieByID(Integer.valueOf(textField.getText()));
-					s.setTitulo(textField_Serie.getText());
-					s.setEpisodios(Integer.valueOf(textField_Episodios.getText()));
-					s.setTemporadas(Integer.valueOf(textField_Temporadas.getText()));
-					ClienteDAO.updateSerie(s);
+					
+					Cliente c = ClienteDAO.selectClienteByID(Integer.valueOf(textField_idCliente.getText()));
+					c.setNombre(textField_nombreCliente.getText());
+					c.setApellidos(textField_apellidosCliente.getText());
+					c.setEdad(Integer.valueOf(Integer.parseInt(textField_edad.getText())));
+					c.setAltura(Double.parseDouble(textField_altura.getText()));
+					c.setPeso(Integer.parseInt(textField_peso.getText()));
+					ClienteDAO.updateCliente(c);
 					btnActualizarTabla.doClick();
-					*/
+					
 				} catch (Exception e) {
 					System.out.println(e);
 				}
@@ -262,11 +314,11 @@ public class App {
 		btnBorrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					/*
-					Cliente s = ClienteDAO.selectSerieByID(Integer.valueOf(textField.getText()));
-					ClienteDAO.deleteSerie(s.getId());
+					
+					Cliente s = ClienteDAO.selectClienteByID(Integer.valueOf(textField_idCliente.getText()));
+					ClienteDAO.deleteCliente(s.getId());
 					btnActualizarTabla.doClick();
-					*/
+					
 				} catch (Exception e) {
 					System.out.println(e);
 				}
@@ -299,14 +351,42 @@ public class App {
 		frame.getContentPane().add(lblClientes_1_1);
 		
 		JButton btnGuardar_1 = new JButton("Añadir");
+		btnGuardar_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				Ejercicio ej = new Ejercicio(textField_nombreEjercicio.getText(),Integer.parseInt(textField_series.getText()), Integer.parseInt(textField_repeticiones.getText()),Integer.parseInt(textField_cargaEnKg.getText()));
+				EjercicioDAO.insertEjercicio(ej);
+				btnActualizarTabla.doClick();
+			}
+		});
 		btnGuardar_1.setBounds(591, 226, 132, 32);
 		frame.getContentPane().add(btnGuardar_1);
 		
 		JButton btnActualizar_1 = new JButton("Actualizar");
+		btnActualizar_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				Ejercicio ej = EjercicioDAO.selectEjercicioByID(Integer.valueOf(textField_idEjercicio.getText()));
+				ej.setNombre(textField_nombreEjercicio.getText());
+				ej.setNumeroDeSeries(Integer.parseInt(textField_series.getText()));
+				ej.setRepeticiones(Integer.valueOf(Integer.parseInt(textField_repeticiones.getText())));
+				ej.setCargaEnKg(Integer.parseInt(textField_cargaEnKg.getText()));
+				EjercicioDAO.updateEjercicio(ej);
+				btnActualizarTabla.doClick();
+				
+			}
+		});
 		btnActualizar_1.setBounds(735, 226, 157, 32);
 		frame.getContentPane().add(btnActualizar_1);
 		
 		JButton btnBorrar_1 = new JButton("Borrar");
+		btnBorrar_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Ejercicio ej = EjercicioDAO.selectEjercicioByID(Integer.valueOf(textField_idEjercicio.getText()));
+				EjercicioDAO.deleteEjercicio(ej.getId());
+				btnActualizarTabla.doClick();
+			}
+		});
 		btnBorrar_1.setBounds(904, 226, 157, 32);
 		frame.getContentPane().add(btnBorrar_1);
 		
@@ -315,73 +395,154 @@ public class App {
 		frame.getContentPane().add(button_1);
 		
 		JTextPane textPane = new JTextPane();
-		textPane.setBounds(32, 317, 470, 279);
+		textPane.setBounds(32, 383, 470, 268);
 		frame.getContentPane().add(textPane);
 		
 		JLabel lblEjerciciosDelCliente = new JLabel("EJERCICIOS DEL CLIENTE:");
 		lblEjerciciosDelCliente.setFont(new Font("Dhurjati", Font.BOLD, 24));
-		lblEjerciciosDelCliente.setBounds(33, 293, 231, 32);
+		lblEjerciciosDelCliente.setBounds(33, 348, 231, 32);
 		frame.getContentPane().add(lblEjerciciosDelCliente);
 		
-		JComboBox comboBoxMostrarEjercicios = new JComboBox();
-		comboBoxMostrarEjercicios.setBounds(262, 293, 52, 24);
-		frame.getContentPane().add(comboBoxMostrarEjercicios);
 		
-		JButton btnGuardar_1_1 = new JButton("Añadir");
-		btnGuardar_1_1.setBounds(1152, 256, 224, 32);
-		frame.getContentPane().add(btnGuardar_1_1);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(1152, 226, 107, 24);
-		frame.getContentPane().add(comboBox);
+		JButton btnBorrarRutina = 
+				new JButton("Borrar");
+		btnBorrarRutina.setBounds(1369, 262, 202, 32);
+		frame.getContentPane().add(btnBorrarRutina);
 		
-		JComboBox comboBox_1 = new JComboBox();
-		comboBox_1.setBounds(1271, 226, 107, 24);
-		frame.getContentPane().add(comboBox_1);
+		
+		
 		
 		JLabel lblNombre = new JLabel("nombre:");
 		lblNombre.setBounds(591, 277, 70, 15);
 		frame.getContentPane().add(lblNombre);
 		
 		JLabel lblRepeticiones = new JLabel("repeticiones:");
-		lblRepeticiones.setBounds(855, 277, 94, 15);
+		lblRepeticiones.setBounds(706, 316, 94, 15);
 		frame.getContentPane().add(lblRepeticiones);
 		
 		JLabel lblSeries = new JLabel("series:");
-		lblSeries.setBounds(762, 277, 70, 15);
+		lblSeries.setBounds(949, 273, 70, 15);
 		frame.getContentPane().add(lblSeries);
 		
-		textField = new JTextField();
-		textField.setBounds(813, 274, 37, 25);
-		frame.getContentPane().add(textField);
-		textField.setColumns(10);
+		textField_series = new JTextField();
+		textField_series.setBounds(1000, 270, 37, 25);
+		frame.getContentPane().add(textField_series);
+		textField_series.setColumns(10);
 		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(951, 272, 37, 25);
-		frame.getContentPane().add(textField_1);
+		textField_repeticiones = new JTextField();
+		textField_repeticiones.setColumns(10);
+		textField_repeticiones.setBounds(804, 311, 37, 25);
+		frame.getContentPane().add(textField_repeticiones);
 		
 		JLabel lblCargaEnKg = new JLabel("carga en KG:");
-		lblCargaEnKg.setBounds(994, 277, 94, 15);
+		lblCargaEnKg.setBounds(908, 316, 94, 15);
 		frame.getContentPane().add(lblCargaEnKg);
 		
-		textField_2 = new JTextField();
-		textField_2.setColumns(10);
-		textField_2.setBounds(1090, 275, 37, 25);
-		frame.getContentPane().add(textField_2);
+		textField_cargaEnKg = new JTextField();
+		textField_cargaEnKg.setColumns(10);
+		textField_cargaEnKg.setBounds(1000, 311, 37, 25);
+		frame.getContentPane().add(textField_cargaEnKg);
 		
-		textField_3 = new JTextField();
-		textField_3.setColumns(10);
-		textField_3.setBounds(655, 272, 107, 25);
-		frame.getContentPane().add(textField_3);
+		textField_nombreEjercicio = new JTextField();
+		textField_nombreEjercicio.setColumns(10);
+		textField_nombreEjercicio.setBounds(655, 272, 237, 25);
+		frame.getContentPane().add(textField_nombreEjercicio);
 		
-		List<Cliente> clientes = ClienteDAO.selectAllClientes();
-		for(Cliente c: clientes) {
-			comboBoxMostrarEjercicios.addItem(c.getId());
-		}
+		JLabel lblNombre_1 = new JLabel("nombre:");
+		lblNombre_1.setBounds(32, 273, 70, 15);
+		frame.getContentPane().add(lblNombre_1);
+		
+		textField_nombreCliente = new JTextField();
+		textField_nombreCliente.setColumns(10);
+		textField_nombreCliente.setBounds(94, 270, 107, 25);
+		frame.getContentPane().add(textField_nombreCliente);
+		
+		textField_apellidosCliente = new JTextField();
+		textField_apellidosCliente.setColumns(10);
+		textField_apellidosCliente.setBounds(285, 270, 217, 25);
+		frame.getContentPane().add(textField_apellidosCliente);
+		
+		JLabel lblNombre_1_1 = new JLabel("apellidos:");
+		lblNombre_1_1.setBounds(213, 273, 70, 15);
+		frame.getContentPane().add(lblNombre_1_1);
+		
+		textField_edad = new JTextField();
+		textField_edad.setColumns(10);
+		textField_edad.setBounds(380, 306, 37, 25);
+		frame.getContentPane().add(textField_edad);
+		
+		JLabel lblEdad = new JLabel("edad:");
+		lblEdad.setBounds(333, 309, 70, 15);
+		frame.getContentPane().add(lblEdad);
+		
+		JLabel lblAltura = new JLabel("altura:");
+		lblAltura.setBounds(233, 307, 94, 15);
+		frame.getContentPane().add(lblAltura);
+		
+		textField_altura = new JTextField();
+		textField_altura.setColumns(10);
+		textField_altura.setBounds(285, 306, 37, 25);
+		frame.getContentPane().add(textField_altura);
+		
+		JLabel lblPeso = new JLabel("peso:");
+		lblPeso.setBounds(423, 311, 59, 15);
+		frame.getContentPane().add(lblPeso);
+		
+		textField_peso = new JTextField();
+		textField_peso.setColumns(10);
+		textField_peso.setBounds(465, 306, 37, 25);
+		frame.getContentPane().add(textField_peso);
+		
+		JLabel lblNombre_1_2 = new JLabel("id:");
+		lblNombre_1_2.setBounds(32, 311, 31, 15);
+		frame.getContentPane().add(lblNombre_1_2);
+		
+		textField_idCliente = new JTextField();
+		textField_idCliente.setColumns(10);
+		textField_idCliente.setBounds(55, 300, 37, 25);
+		frame.getContentPane().add(textField_idCliente);
+		textField_idCliente.setEnabled(false);
+		
+		JLabel lblNombre_1_2_1 = new JLabel("id:");
+		lblNombre_1_2_1.setBounds(591, 316, 31, 15);
+		frame.getContentPane().add(lblNombre_1_2_1);
+		
+		textField_idEjercicio = new JTextField();
+		textField_idEjercicio.setEnabled(false);
+		textField_idEjercicio.setColumns(10);
+		textField_idEjercicio.setBounds(622, 311, 37, 25);
+		frame.getContentPane().add(textField_idEjercicio);
+		
+		JButton btnEliminar = new JButton("Añadir");
+		btnEliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				String cliente_id = comboBox_MostrarClientes.getSelectedItem().toString();
+				String[] clienting = cliente_id.split(" : ");
+				String strong = clienting[0];
+				CE ce = new CE(Integer.parseInt(comboBox_MostrarClientes.getSelectedItem().toString()),Integer.parseInt(comboBox_MostrarEjercicios.getSelectedItem().toString()));
+				ClienteEjercicioDAO.insertClienteEjercicio(ce);
+				btnActualizarTabla.doClick();
+			}
+		});
+		btnEliminar.setBounds(1152, 262, 205, 32);
+		frame.getContentPane().add(btnEliminar);
 		
 		
-		comboBoxMostrarEjercicios.getSelectedItem();
+		
+		
+		
+		JSeparator separator = new JSeparator();
+		separator.setBounds(32, 343, 1539, 15);
+		frame.getContentPane().add(separator);
+		
+		JLabel lblVivaElEjercicio = new JLabel("VIVA EL EJERCICIO");
+		lblVivaElEjercicio.setFont(new Font("Dialog", Font.BOLD, 90));
+		lblVivaElEjercicio.setBounds(588, 405, 941, 173);
+		frame.getContentPane().add(lblVivaElEjercicio);
+		
+		
 		
 	}
 }

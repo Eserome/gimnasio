@@ -16,7 +16,7 @@ public class ClienteEjercicioDAO {
 
 	
 	
-	public static void insertCE(CE ce) {
+	public static void insertClienteEjercicio(CE ce) {
 		Transaction transaction = null;
 		try (Session session=HibernateUtil.getSessionFactory().openSession()) {
 			transaction = session.beginTransaction();
@@ -42,7 +42,7 @@ public class ClienteEjercicioDAO {
 		}
 	}
 	
-	public static void deleteEjercicio(int id) {
+	public static void deleteClienteEjercicio(int id) {
 		Transaction transaction = null;
 		Ejercicio ej= null;
 		try (Session session=HibernateUtil.getSessionFactory().openSession()) {

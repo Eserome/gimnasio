@@ -36,9 +36,8 @@ public class Cliente {
 		super();
 	}
 	
-	public Cliente(int id, String nombre, String apellidos, int edad, double altura, int peso) {
+	public Cliente(String nombre, String apellidos, int edad, double altura, int peso) {
 		super();
-		this.id = id;
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.edad = edad;
