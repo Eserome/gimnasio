@@ -29,6 +29,19 @@ public class ClienteEjercicioDAO {
 		}
 	}
 	
+	public static void deleteCE(CE ce) {
+		Transaction transaction = null;
+		try (Session session=HibernateUtil.getSessionFactory().openSession()) {
+			transaction = session.beginTransaction();
+			session.remove(ce);
+			transaction.commit();
+		} catch (Exception e) {
+			if(transaction!=null) {
+				transaction.rollback();
+			}
+		}
+	}
+	
 	public static void updateEjercicio(CE ce) {
 		Transaction transaction = null;
 		try (Session session=HibernateUtil.getSessionFactory().openSession()) {
@@ -57,13 +70,30 @@ public class ClienteEjercicioDAO {
 		}
 	}
 	
-	public static CE selectEjercicioByID(int id) {
+	public static List<CE> selectEjerciciosByClienteID(int id_cliente) {
+		Transaction transaction = null;
+		List<CE> ejercicios = null;
+		try (Session session=HibernateUtil.getSessionFactory().openSession()) {
+			transaction = session.beginTransaction();
+			Query<CE> query = session.createQuery("FROM CE WHERE id_cliente = :id_cliente AND id_ejercicio = :id_ejercicio",CE.class);
+			query.setParameter("id_cliente",id_cliente);
+			transaction.commit();
+		} catch (Exception e) {
+			if(transaction!=null) {
+				transaction.rollback();
+			}
+		}
+		return ejercicios;
+	}
+	
+	public static CE selectCEbyIDS(int id_cliente, int id_ejercicio) {
 		Transaction transaction = null;
 		CE ce = null;
 		try (Session session=HibernateUtil.getSessionFactory().openSession()) {
 			transaction = session.beginTransaction();
-			Query<CE> query = session.createQuery("FROM CE WHERE id = :id",CE.class);
-			query.setParameter("id",id);
+			
+			query.setParameter("id_cliente",id_cliente);
+			query.setParameter("id_eercicio",id_ejercicio);
 			ce=query.uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {
@@ -73,6 +103,7 @@ public class ClienteEjercicioDAO {
 		}
 		return ce;
 	}
+	
 	
 	public static List<CE> selectAllCES() {
 		Transaction transaction = null;
