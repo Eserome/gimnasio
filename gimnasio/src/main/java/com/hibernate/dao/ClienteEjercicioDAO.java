@@ -91,7 +91,7 @@ public class ClienteEjercicioDAO {
 		CE ce = null;
 		try (Session session=HibernateUtil.getSessionFactory().openSession()) {
 			transaction = session.beginTransaction();
-			
+			Query<CE> query = session.createQuery("FROM CE WHERE id_cliente = :id_cliente AND id_ejercicio = :id_ejercicio",CE.class);
 			query.setParameter("id_cliente",id_cliente);
 			query.setParameter("id_eercicio",id_ejercicio);
 			ce=query.uniqueResult();
