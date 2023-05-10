@@ -70,13 +70,14 @@ public class ClienteEjercicioDAO {
 		}
 	}
 	
-	public static List<CE> selectEjerciciosByClienteID(int id_cliente) {
+	public static List<CE> selectEjerciciosByClienteID(int cliente_id) {
 		Transaction transaction = null;
 		List<CE> ejercicios = null;
 		try (Session session=HibernateUtil.getSessionFactory().openSession()) {
 			transaction = session.beginTransaction();
-			Query<CE> query = session.createQuery("FROM CE WHERE id_cliente = :id_cliente AND id_ejercicio = :id_ejercicio",CE.class);
-			query.setParameter("id_cliente",id_cliente);
+			Query<CE> query = session.createQuery("FROM CE WHERE cliente_id = :cliente_id",CE.class);
+			query.setParameter("cliente_id",cliente_id);
+			ejercicios = query.getResultList();
 			transaction.commit();
 		} catch (Exception e) {
 			if(transaction!=null) {
@@ -86,14 +87,14 @@ public class ClienteEjercicioDAO {
 		return ejercicios;
 	}
 	
-	public static CE selectCEbyIDS(int id_cliente, int id_ejercicio) {
+	public static CE selectCEbyIDS(int cliente_id, int ejercicio_id) {
 		Transaction transaction = null;
 		CE ce = null;
 		try (Session session=HibernateUtil.getSessionFactory().openSession()) {
 			transaction = session.beginTransaction();
-			Query<CE> query = session.createQuery("FROM CE WHERE id_cliente = :id_cliente AND id_ejercicio = :id_ejercicio",CE.class);
-			query.setParameter("id_cliente",id_cliente);
-			query.setParameter("id_eercicio",id_ejercicio);
+			Query<CE> query = session.createQuery("FROM CE WHERE cliente_id = :cliente_id AND id_ejercicio = :ejercicio_id",CE.class);
+			query.setParameter("cliente_id",cliente_id);
+			query.setParameter("ejercicio_id",ejercicio_id);
 			ce=query.uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {

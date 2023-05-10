@@ -44,6 +44,7 @@ import javax.swing.JList;
 public class App {
 
 	private JFrame frame;
+	private JScrollPane scrollLista;
 	private JTextField textField_series;
 	private JTextField textField_repeticiones;
 	private JTextField textField_cargaEnKg;
@@ -55,8 +56,8 @@ public class App {
 	private JTextField textField_peso;
 	private JTextField textField_idCliente;
 	private JTextField textField_idEjercicio;
-	private JTextField textField;
-	private JTextField textField_1;
+	private JTextField textField_añadirClienteRutina;
+	private JTextField textField_añadirEjercicioCliente;
 	
 
 	
@@ -93,7 +94,7 @@ public class App {
 		frame.setBounds(100, 100, 1475, 700);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
+		DefaultListModel modeloListaEjercicios = new DefaultListModel();
 		
 		
 		
@@ -136,7 +137,7 @@ public class App {
 				textField_series.setText(model.getValueAt(index, 2).toString());
 				textField_repeticiones.setText(model.getValueAt(index, 3).toString());
 				textField_cargaEnKg.setText(model.getValueAt(index, 4).toString());
-				
+				textField_añadirEjercicioCliente.setText(model.getValueAt(index, 1).toString() + ":" + model.getValueAt(index, 0).toString());
 				
 				
 				
@@ -164,6 +165,7 @@ public class App {
 				textField_edad.setText(model.getValueAt(index, 3).toString());
 				textField_altura.setText(model.getValueAt(index, 4).toString());
 				textField_peso.setText(model.getValueAt(index, 5).toString());
+				textField_añadirClienteRutina.setText(model.getValueAt(index, 1).toString() + ":" +  model.getValueAt(index, 0).toString());
 				
 			}
 		});
@@ -180,7 +182,7 @@ public class App {
 		frame.getContentPane().add(scrollPaneEjercicios);
 		
 		JScrollPane scrollPaneCE = new JScrollPane(tablaCE);
-		scrollPaneCE.setBounds(1152, 432, 290, 182);
+		scrollPaneCE.setBounds(1162, 151, 269, 68);
 		frame.getContentPane().add(scrollPaneCE);
 		
 		JComboBox comboBox_MostrarClientes = new JComboBox();
@@ -188,22 +190,12 @@ public class App {
 		frame.getContentPane().add(comboBox_MostrarClientes);
 		
 		JComboBox comboBox_clienteId = new JComboBox();
-		comboBox_clienteId.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				String cliente_id = comboBox_clienteId.getSelectedItem().toString();
-				String[] clienting = cliente_id.split(":");
-				String idClienteExtraido = clienting[0];
-				
-				List<> 
-			}
-		});
 		
-		comboBox_clienteId.setBounds(1161, 183, 144, 24);
+		comboBox_clienteId.setBounds(1162, 227, 269, 24);
 		frame.getContentPane().add(comboBox_clienteId);
 				
 		JComboBox comboBox_MostrarEjercicios = new JComboBox();
-		comboBox_MostrarEjercicios.setBounds(1308, 368, 134, 24);
+		comboBox_MostrarEjercicios.setBounds(1162, 263, 269, 24);
 		frame.getContentPane().add(comboBox_MostrarEjercicios);
 		
 		JButton btnActualizarTabla = new JButton("");
@@ -257,6 +249,8 @@ public class App {
 				for(Ejercicio ej: ejerciciosId) {
 					comboBox_MostrarEjercicios.addItem(ej.getId() + ":" + ej.getNombre());
 				}
+				
+				
 				
 			}
 		});
@@ -383,10 +377,6 @@ public class App {
 		button_1.setBounds(1075, 226, 52, 32);
 		frame.getContentPane().add(button_1);
 		
-		JTextPane textPane = new JTextPane();
-		textPane.setBounds(32, 383, 470, 268);
-		frame.getContentPane().add(textPane);
-		
 		JLabel lblEjerciciosDelCliente = new JLabel("EJERCICIOS DEL CLIENTE:");
 		lblEjerciciosDelCliente.setFont(new Font("Dhurjati", Font.BOLD, 24));
 		lblEjerciciosDelCliente.setBounds(33, 348, 231, 32);
@@ -413,7 +403,7 @@ public class App {
 				
 			}
 		});
-		btnBorrarRutina.setBounds(1161, 300, 249, 32);
+		btnBorrarRutina.setBounds(1162, 299, 269, 32);
 		frame.getContentPane().add(btnBorrarRutina);
 		
 		
@@ -463,6 +453,35 @@ public class App {
 		textField_nombreCliente.setColumns(10);
 		textField_nombreCliente.setBounds(94, 270, 107, 25);
 		frame.getContentPane().add(textField_nombreCliente);
+		
+		JLabel lblClientes_1_1 = new JLabel("AFEGIR RUTINA");
+		lblClientes_1_1.setFont(new Font("Dhurjati", Font.BOLD, 24));
+		lblClientes_1_1.setBounds(1161, 12, 161, 32);
+		frame.getContentPane().add(lblClientes_1_1);
+		
+		JLabel lblCliente = new JLabel("Cliente:id");
+		lblCliente.setBounds(1162, 44, 70, 15);
+		frame.getContentPane().add(lblCliente);
+		
+		JLabel lblCliente_1 = new JLabel("Ejercicio:id");
+		lblCliente_1.setBounds(1299, 44, 99, 15);
+		frame.getContentPane().add(lblCliente_1);
+		
+		textField_añadirClienteRutina = new JTextField();
+		textField_añadirClienteRutina.setBounds(1162, 59, 123, 19);
+		frame.getContentPane().add(textField_añadirClienteRutina);
+		textField_añadirClienteRutina.setColumns(10);
+		
+		textField_añadirEjercicioCliente = new JTextField();
+		textField_añadirEjercicioCliente.setColumns(10);
+		textField_añadirEjercicioCliente.setBounds(1297, 59, 134, 19);
+		frame.getContentPane().add(textField_añadirEjercicioCliente);
+		
+		JLabel lblClientes_1_1_1 = new JLabel("BORRAR RUTINA");
+		lblClientes_1_1_1.setFont(new Font("Dhurjati", Font.BOLD, 24));
+		lblClientes_1_1_1.setBounds(1162, 123, 161, 32);
+		frame.getContentPane().add(lblClientes_1_1_1);
+		
 		
 		textField_apellidosCliente = new JTextField();
 		textField_apellidosCliente.setColumns(10);
@@ -520,23 +539,23 @@ public class App {
 		textField_idEjercicio.setBounds(655, 304, 37, 25);
 		frame.getContentPane().add(textField_idEjercicio);
 		
-		JButton btnEliminar = new JButton("Añadir");
-		btnEliminar.addActionListener(new ActionListener() {
+		JButton btnAñadir= new JButton("Añadir");
+		btnAñadir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				String cliente_id = comboBox_clienteId.getSelectedItem().toString();
+				String cliente_id = textField_añadirClienteRutina.getText();
 				String[] clienting = cliente_id.split(":");
-				String idClienteExtraido = clienting[0];
-				String ejercicio_id = comboBox_MostrarEjercicios.getSelectedItem().toString();
+				String idClienteExtraido = clienting[1];
+				String ejercicio_id = textField_añadirEjercicioCliente.getText();
 				String[] ejercicing = ejercicio_id.split(":");
-				String idEjercicioExtraido = ejercicing[0];
+				String idEjercicioExtraido = ejercicing[1];
 				CE ce = new CE(Integer.parseInt(idClienteExtraido), Integer.parseInt(idEjercicioExtraido));
 				ClienteEjercicioDAO.insertClienteEjercicio(ce);
 				btnActualizarTabla.doClick();
 			}
 		});
-		btnEliminar.setBounds(1161, 79, 270, 32);
-		frame.getContentPane().add(btnEliminar);
+		btnAñadir.setBounds(1161, 79, 270, 32);
+		frame.getContentPane().add(btnAñadir);
 		
 		tablaCE.addMouseListener(new MouseAdapter() {
 			@Override
@@ -546,12 +565,7 @@ public class App {
 				
 				int idCliente =  Integer.parseInt( model.getValueAt(index, 0).toString());
 				int idEjercicio =  Integer.parseInt( model.getValueAt(index, 1).toString());
-				
-				
-				JOptionPane.showConfirmDialog(frame, "Desea eliminar la rutina?", "Alerta", JOptionPane.YES_NO_OPTION, 0);
-				
-				
-				
+	
 				Cliente c = ClienteDAO.selectClienteByID(idCliente);
 				Ejercicio ej = EjercicioDAO.selectEjercicioByID(idEjercicio);
 				
@@ -576,42 +590,41 @@ public class App {
 		button_2_1.setBounds(1075, 269, 52, 62);
 		frame.getContentPane().add(button_2_1);
 		
+		JTextArea textArea_EjerciciosCliente = new JTextArea();
+		textArea_EjerciciosCliente.setBounds(32, 377, 470, 274);
+		frame.getContentPane().add(textArea_EjerciciosCliente);
+		
 		JButton btnMostrar = new JButton("Mostrar");
+		btnMostrar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				String cliente_id = comboBox_MostrarClientes.getSelectedItem().toString();
+				String[] clienting = cliente_id.split(":");
+				String idClienteExtraido = clienting[0];
+				
+				textArea_EjerciciosCliente.setText("LISTA DE EJERCICIOS PARA EL CLIENTE\n------------------------------------------------------------------------------------------");
+				
+				List<CE> listaEjerciciosCliente = ClienteEjercicioDAO.selectEjerciciosByClienteID(Integer.parseInt(idClienteExtraido));
+				Cliente c = ClienteDAO.selectClienteByID(Integer.parseInt(idClienteExtraido));
+				textArea_EjerciciosCliente.setText("          " + textArea_EjerciciosCliente.getText() + ": \n\n	" + c.getNombre() + " " + c.getApellidos() + "\n\n Edad: " + c.getEdad() + "	Altura: " + c.getAltura() + " metros	Peso: " + c.getPeso() + " Kg\n\n------------------------------------------------------------------------------------------");
+				textArea_EjerciciosCliente.setText(textArea_EjerciciosCliente.getText() + "\nEjercicio		" + "Nº de Series	" + "Repeticiones	" + "Carga en KG\n------------------------------------------------------------------------------------------");
+				
+				for(CE ce : listaEjerciciosCliente) {
+					Ejercicio ej = EjercicioDAO.selectEjercicioByID(ce.getEjercicio_id());
+					textArea_EjerciciosCliente.setText(textArea_EjerciciosCliente.getText() + "\n" + ej.getNombre() + "		" + ej.getNumeroDeSeries() + "	" + ej.getRepeticiones() + "	" + ej.getCargaEnKg());
+				}
+				
+				textArea_EjerciciosCliente.setText(textArea_EjerciciosCliente.getText() + "\n\nÁNIMO CON EL ENTRENE!");
+			}
+		});
 		btnMostrar.setBounds(400, 348, 102, 25);
 		frame.getContentPane().add(btnMostrar);
 		
-		JList list = new JList();
-		DefaultListModel modeloListaEjercicios = new DefaultListModel();
-		list.setBounds(1160, 219, 250, 72);
-		frame.getContentPane().add(list);
 		
-		JLabel lblClientes_1_1 = new JLabel("AFEGIR RUTINA");
-		lblClientes_1_1.setFont(new Font("Dhurjati", Font.BOLD, 24));
-		lblClientes_1_1.setBounds(1161, 12, 161, 32);
-		frame.getContentPane().add(lblClientes_1_1);
 		
-		JLabel lblCliente = new JLabel("Cliente");
-		lblCliente.setBounds(1162, 44, 70, 15);
-		frame.getContentPane().add(lblCliente);
 		
-		JLabel lblCliente_1 = new JLabel("Ejercicio");
-		lblCliente_1.setBounds(1299, 44, 70, 15);
-		frame.getContentPane().add(lblCliente_1);
 		
-		textField = new JTextField();
-		textField.setBounds(1162, 59, 123, 19);
-		frame.getContentPane().add(textField);
-		textField.setColumns(10);
 		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(1297, 59, 134, 19);
-		frame.getContentPane().add(textField_1);
-		
-		JLabel lblClientes_1_1_1 = new JLabel("BORRAR RUTINA");
-		lblClientes_1_1_1.setFont(new Font("Dhurjati", Font.BOLD, 24));
-		lblClientes_1_1_1.setBounds(1161, 158, 161, 32);
-		frame.getContentPane().add(lblClientes_1_1_1);
 		
 		
 		
