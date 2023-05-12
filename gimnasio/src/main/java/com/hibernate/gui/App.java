@@ -19,25 +19,34 @@ import com.hibernate.model.CE;
 import com.hibernate.model.Cliente;
 import com.hibernate.model.Ejercicio;
 
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.awt.Font;
+import java.awt.Image;
+import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.JTree;
+import javax.swing.border.Border;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JSeparator;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import javax.swing.JList;
+import java.awt.Dimension;
 
 
 
@@ -58,6 +67,8 @@ public class App {
 	private JTextField textField_idEjercicio;
 	private JTextField textField_añadirClienteRutina;
 	private JTextField textField_añadirEjercicioCliente;
+	private JTextField picClientTextPath;
+	private JTextField textField;
 	
 
 	
@@ -91,7 +102,7 @@ public class App {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 1475, 700);
+		frame.setBounds(100, 100, 1575, 800);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		DefaultListModel modeloListaEjercicios = new DefaultListModel();
@@ -144,6 +155,10 @@ public class App {
 			}
 		});
 		
+		picClientTextPath = new JTextField();
+		picClientTextPath.setBounds(323, 335, 183, 24);
+		frame.getContentPane().add(picClientTextPath);
+		picClientTextPath.setColumns(10);
 		
 		
 		JTable tablaClientes = new JTable(modelClientes);
@@ -174,28 +189,28 @@ public class App {
 		
 		
 		JScrollPane scrollPaneClientes = new JScrollPane(tablaClientes);
-		scrollPaneClientes.setBounds(32, 32, 536, 182);
+		scrollPaneClientes.setBounds(33, 44, 536, 182);
 		frame.getContentPane().add(scrollPaneClientes);
 		
 		JScrollPane scrollPaneEjercicios = new JScrollPane(tablaEjercicios);
-		scrollPaneEjercicios.setBounds(591, 32, 536, 182);
+		scrollPaneEjercicios.setBounds(591, 44, 536, 182);
 		frame.getContentPane().add(scrollPaneEjercicios);
 		
 		JScrollPane scrollPaneCE = new JScrollPane(tablaCE);
-		scrollPaneCE.setBounds(1162, 151, 269, 68);
+		scrollPaneCE.setBounds(1161, 228, 269, 107);
 		frame.getContentPane().add(scrollPaneCE);
 		
 		JComboBox comboBox_MostrarClientes = new JComboBox();
-		comboBox_MostrarClientes.setBounds(262, 348, 134, 24);
+		comboBox_MostrarClientes.setBounds(262, 437, 134, 24);
 		frame.getContentPane().add(comboBox_MostrarClientes);
 		
 		JComboBox comboBox_clienteId = new JComboBox();
 		
-		comboBox_clienteId.setBounds(1162, 227, 269, 24);
+		comboBox_clienteId.setBounds(1161, 343, 269, 24);
 		frame.getContentPane().add(comboBox_clienteId);
 				
 		JComboBox comboBox_MostrarEjercicios = new JComboBox();
-		comboBox_MostrarEjercicios.setBounds(1162, 263, 269, 24);
+		comboBox_MostrarEjercicios.setBounds(1161, 379, 269, 24);
 		frame.getContentPane().add(comboBox_MostrarEjercicios);
 		
 		JButton btnActualizarTabla = new JButton("");
@@ -275,7 +290,7 @@ public class App {
 				
 			}
 		});
-		btnGuardar.setBounds(32, 226, 132, 32);
+		btnGuardar.setBounds(33, 371, 176, 32);
 		frame.getContentPane().add(btnGuardar);
 		
 		JButton btnActualizar = new JButton("Actualizar");
@@ -297,7 +312,7 @@ public class App {
 				}
 			}
 		});
-		btnActualizar.setBounds(176, 226, 157, 32);
+		btnActualizar.setBounds(221, 371, 175, 32);
 		frame.getContentPane().add(btnActualizar);
 		
 		JButton btnBorrar = new JButton("Borrar");
@@ -314,7 +329,7 @@ public class App {
 				}
 			}
 		});
-		btnBorrar.setBounds(345, 226, 157, 32);
+		btnBorrar.setBounds(408, 371, 161, 32);
 		frame.getContentPane().add(btnBorrar);
 		
 		JLabel lblClientes = new JLabel("CLIENTES");
@@ -322,9 +337,26 @@ public class App {
 		lblClientes.setBounds(33, 12, 88, 32);
 		frame.getContentPane().add(lblClientes);
 		
-		JButton button = new JButton("");
-		button.setBounds(514, 226, 52, 32);
-		frame.getContentPane().add(button);
+		JButton buttonAñadirImagenCliente = new JButton("");
+		buttonAñadirImagenCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser chooser = new JFileChooser();
+		        chooser.showOpenDialog(null);
+		        File f= chooser.getSelectedFile();
+		        String fileName= f.getAbsolutePath();
+		        picClientTextPath.setText(fileName);
+			}
+		});
+		buttonAñadirImagenCliente.setPreferredSize(new Dimension(15, 10));
+		buttonAñadirImagenCliente.setBounds(516, 335, 53, 24);
+		frame.getContentPane().add(buttonAñadirImagenCliente);
+		
+		buttonAñadirImagenCliente.setIcon(new ImageIcon(App.class.getResource("/com/hibernate/gui/añadirImagen.png")));
+		ImageIcon icono = new ImageIcon(App.class.getResource("/com/hibernate/gui/añadirImagen.png"));
+		
+		Image imagenReducida = icono.getImage().getScaledInstance(20, 20, 5);
+		buttonAñadirImagenCliente.setIcon(new ImageIcon(imagenReducida));
+		
 		
 		
 		
@@ -342,7 +374,7 @@ public class App {
 				btnActualizarTabla.doClick();
 			}
 		});
-		btnGuardar_1.setBounds(591, 226, 132, 32);
+		btnGuardar_1.setBounds(591, 371, 168, 32);
 		frame.getContentPane().add(btnGuardar_1);
 		
 		JButton btnActualizar_1 = new JButton("Actualizar");
@@ -359,7 +391,7 @@ public class App {
 				
 			}
 		});
-		btnActualizar_1.setBounds(735, 226, 157, 32);
+		btnActualizar_1.setBounds(771, 371, 183, 32);
 		frame.getContentPane().add(btnActualizar_1);
 		
 		JButton btnBorrar_1 = new JButton("Borrar");
@@ -370,16 +402,18 @@ public class App {
 				btnActualizarTabla.doClick();
 			}
 		});
-		btnBorrar_1.setBounds(904, 226, 157, 32);
+		btnBorrar_1.setBounds(966, 371, 161, 32);
 		frame.getContentPane().add(btnBorrar_1);
 		
-		JButton button_1 = new JButton("");
-		button_1.setBounds(1075, 226, 52, 32);
-		frame.getContentPane().add(button_1);
+		JButton buttonAñadirImagenEjercicio = new JButton("");
+		buttonAñadirImagenEjercicio.setBounds(1074, 335, 53, 24);
+		frame.getContentPane().add(buttonAñadirImagenEjercicio);
+		
+		buttonAñadirImagenEjercicio.setIcon(new ImageIcon(imagenReducida));
 		
 		JLabel lblEjerciciosDelCliente = new JLabel("EJERCICIOS DEL CLIENTE:");
 		lblEjerciciosDelCliente.setFont(new Font("Dhurjati", Font.BOLD, 24));
-		lblEjerciciosDelCliente.setBounds(33, 348, 231, 32);
+		lblEjerciciosDelCliente.setBounds(33, 437, 231, 32);
 		frame.getContentPane().add(lblEjerciciosDelCliente);
 		
 		
@@ -403,55 +437,55 @@ public class App {
 				
 			}
 		});
-		btnBorrarRutina.setBounds(1162, 299, 269, 32);
+		btnBorrarRutina.setBounds(1442, 228, 81, 170);
 		frame.getContentPane().add(btnBorrarRutina);
 		
 		
 		
 		
 		JLabel lblNombre = new JLabel("nombre:");
-		lblNombre.setBounds(591, 277, 70, 15);
+		lblNombre.setBounds(751, 245, 70, 15);
 		frame.getContentPane().add(lblNombre);
 		
 		JLabel lblRepeticiones = new JLabel("repeticiones:");
-		lblRepeticiones.setBounds(761, 309, 94, 15);
+		lblRepeticiones.setBounds(751, 286, 94, 24);
 		frame.getContentPane().add(lblRepeticiones);
 		
 		JLabel lblSeries = new JLabel("series:");
-		lblSeries.setBounds(967, 271, 52, 15);
+		lblSeries.setBounds(895, 290, 53, 15);
 		frame.getContentPane().add(lblSeries);
 		
 		textField_series = new JTextField();
-		textField_series.setBounds(1024, 269, 37, 25);
+		textField_series.setBounds(943, 286, 37, 24);
 		frame.getContentPane().add(textField_series);
 		textField_series.setColumns(10);
 		
 		textField_repeticiones = new JTextField();
 		textField_repeticiones.setColumns(10);
-		textField_repeticiones.setBounds(855, 304, 37, 25);
+		textField_repeticiones.setBounds(849, 286, 37, 25);
 		frame.getContentPane().add(textField_repeticiones);
 		
 		JLabel lblCargaEnKg = new JLabel("carga en KG:");
-		lblCargaEnKg.setBounds(925, 309, 94, 15);
+		lblCargaEnKg.setBounds(998, 286, 98, 20);
 		frame.getContentPane().add(lblCargaEnKg);
 		
 		textField_cargaEnKg = new JTextField();
 		textField_cargaEnKg.setColumns(10);
-		textField_cargaEnKg.setBounds(1024, 304, 37, 25);
+		textField_cargaEnKg.setBounds(1090, 284, 37, 25);
 		frame.getContentPane().add(textField_cargaEnKg);
 		
 		textField_nombreEjercicio = new JTextField();
 		textField_nombreEjercicio.setColumns(10);
-		textField_nombreEjercicio.setBounds(655, 270, 237, 25);
+		textField_nombreEjercicio.setBounds(824, 238, 223, 25);
 		frame.getContentPane().add(textField_nombreEjercicio);
 		
 		JLabel lblNombre_1 = new JLabel("nombre:");
-		lblNombre_1.setBounds(32, 273, 70, 15);
+		lblNombre_1.setBounds(177, 244, 70, 15);
 		frame.getContentPane().add(lblNombre_1);
 		
 		textField_nombreCliente = new JTextField();
 		textField_nombreCliente.setColumns(10);
-		textField_nombreCliente.setBounds(94, 270, 107, 25);
+		textField_nombreCliente.setBounds(249, 238, 147, 25);
 		frame.getContentPane().add(textField_nombreCliente);
 		
 		JLabel lblClientes_1_1 = new JLabel("AFEGIR RUTINA");
@@ -474,69 +508,69 @@ public class App {
 		
 		textField_añadirEjercicioCliente = new JTextField();
 		textField_añadirEjercicioCliente.setColumns(10);
-		textField_añadirEjercicioCliente.setBounds(1297, 59, 134, 19);
+		textField_añadirEjercicioCliente.setBounds(1297, 59, 123, 19);
 		frame.getContentPane().add(textField_añadirEjercicioCliente);
 		
 		JLabel lblClientes_1_1_1 = new JLabel("BORRAR RUTINA");
 		lblClientes_1_1_1.setFont(new Font("Dhurjati", Font.BOLD, 24));
-		lblClientes_1_1_1.setBounds(1162, 123, 161, 32);
+		lblClientes_1_1_1.setBounds(1161, 194, 161, 53);
 		frame.getContentPane().add(lblClientes_1_1_1);
 		
 		
 		textField_apellidosCliente = new JTextField();
 		textField_apellidosCliente.setColumns(10);
-		textField_apellidosCliente.setBounds(285, 270, 217, 25);
+		textField_apellidosCliente.setBounds(249, 267, 320, 25);
 		frame.getContentPane().add(textField_apellidosCliente);
 		
 		JLabel lblNombre_1_1 = new JLabel("apellidos:");
-		lblNombre_1_1.setBounds(213, 273, 70, 15);
+		lblNombre_1_1.setBounds(177, 270, 70, 24);
 		frame.getContentPane().add(lblNombre_1_1);
 		
 		textField_edad = new JTextField();
 		textField_edad.setColumns(10);
-		textField_edad.setBounds(380, 306, 37, 25);
+		textField_edad.setBounds(381, 299, 53, 25);
 		frame.getContentPane().add(textField_edad);
 		
 		JLabel lblEdad = new JLabel("edad:");
-		lblEdad.setBounds(333, 309, 70, 15);
+		lblEdad.setBounds(337, 302, 62, 21);
 		frame.getContentPane().add(lblEdad);
 		
 		JLabel lblAltura = new JLabel("altura:");
-		lblAltura.setBounds(233, 307, 94, 15);
+		lblAltura.setBounds(177, 300, 87, 25);
 		frame.getContentPane().add(lblAltura);
 		
 		textField_altura = new JTextField();
 		textField_altura.setColumns(10);
-		textField_altura.setBounds(285, 306, 37, 25);
+		textField_altura.setBounds(249, 299, 62, 25);
 		frame.getContentPane().add(textField_altura);
 		
 		JLabel lblPeso = new JLabel("peso:");
-		lblPeso.setBounds(423, 311, 59, 15);
+		lblPeso.setBounds(482, 302, 59, 21);
 		frame.getContentPane().add(lblPeso);
 		
 		textField_peso = new JTextField();
 		textField_peso.setColumns(10);
-		textField_peso.setBounds(465, 306, 37, 25);
+		textField_peso.setBounds(526, 298, 43, 25);
 		frame.getContentPane().add(textField_peso);
 		
 		JLabel lblNombre_1_2 = new JLabel("id:");
-		lblNombre_1_2.setBounds(32, 311, 31, 15);
+		lblNombre_1_2.setBounds(504, 244, 31, 15);
 		frame.getContentPane().add(lblNombre_1_2);
 		
 		textField_idCliente = new JTextField();
 		textField_idCliente.setColumns(10);
-		textField_idCliente.setBounds(55, 300, 37, 25);
+		textField_idCliente.setBounds(526, 239, 43, 25);
 		frame.getContentPane().add(textField_idCliente);
 		textField_idCliente.setEnabled(false);
 		
 		JLabel lblNombre_1_2_1 = new JLabel("id:");
-		lblNombre_1_2_1.setBounds(630, 309, 31, 15);
+		lblNombre_1_2_1.setBounds(1065, 243, 31, 15);
 		frame.getContentPane().add(lblNombre_1_2_1);
 		
 		textField_idEjercicio = new JTextField();
 		textField_idEjercicio.setEnabled(false);
 		textField_idEjercicio.setColumns(10);
-		textField_idEjercicio.setBounds(655, 304, 37, 25);
+		textField_idEjercicio.setBounds(1090, 238, 37, 25);
 		frame.getContentPane().add(textField_idEjercicio);
 		
 		JButton btnAñadir= new JButton("Añadir");
@@ -554,7 +588,7 @@ public class App {
 				btnActualizarTabla.doClick();
 			}
 		});
-		btnAñadir.setBounds(1161, 79, 270, 32);
+		btnAñadir.setBounds(1443, 59, 80, 135);
 		frame.getContentPane().add(btnAñadir);
 		
 		tablaCE.addMouseListener(new MouseAdapter() {
@@ -579,19 +613,11 @@ public class App {
 		
 		
 		JSeparator separator = new JSeparator();
-		separator.setBounds(32, 343, 1539, 15);
+		separator.setBounds(12, 410, 1539, 15);
 		frame.getContentPane().add(separator);
 		
-		JButton button_2 = new JButton("");
-		button_2.setBounds(514, 269, 52, 62);
-		frame.getContentPane().add(button_2);
-		
-		JButton button_2_1 = new JButton("");
-		button_2_1.setBounds(1075, 269, 52, 62);
-		frame.getContentPane().add(button_2_1);
-		
 		JTextArea textArea_EjerciciosCliente = new JTextArea();
-		textArea_EjerciciosCliente.setBounds(32, 377, 470, 274);
+		textArea_EjerciciosCliente.setBounds(32, 466, 470, 274);
 		frame.getContentPane().add(textArea_EjerciciosCliente);
 		
 		JButton btnMostrar = new JButton("Mostrar");
@@ -617,8 +643,42 @@ public class App {
 				textArea_EjerciciosCliente.setText(textArea_EjerciciosCliente.getText() + "\n\nÁNIMO CON EL ENTRENE!");
 			}
 		});
-		btnMostrar.setBounds(400, 348, 102, 25);
+		btnMostrar.setBounds(400, 437, 102, 25);
 		frame.getContentPane().add(btnMostrar);
+		
+		JLabel lblImagenCliente = new JLabel("Imagen del cliente");
+		lblImagenCliente.setBounds(179, 339, 146, 15);
+		frame.getContentPane().add(lblImagenCliente);
+		
+		JLabel labelImagenCliente = new JLabel("");
+		labelImagenCliente.setBounds(33, 238, 132, 123);
+		frame.getContentPane().add(labelImagenCliente);
+		
+		labelImagenCliente.setBorder(BorderFactory.createLineBorder(Color.black));
+		
+		JLabel lblImagenDelEjercicio = new JLabel("Imagen del ejercicio");
+		lblImagenDelEjercicio.setBounds(751, 339, 146, 15);
+		frame.getContentPane().add(lblImagenDelEjercicio);
+		
+		textField = new JTextField();
+		textField.setColumns(10);
+		textField.setBounds(902, 337, 160, 24);
+		frame.getContentPane().add(textField);
+		
+		JLabel labelImagenEjercicio = new JLabel("");
+		labelImagenEjercicio.setBorder(BorderFactory.createLineBorder(Color.black));
+		labelImagenEjercicio.setBounds(591, 236, 132, 123);
+		frame.getContentPane().add(labelImagenEjercicio);
+		
+		JLabel labelMostrarImgCliente = new JLabel("");
+		labelMostrarImgCliente.setBorder(BorderFactory.createLineBorder(Color.black));
+		labelMostrarImgCliente.setBounds(1161, 82, 123, 112);
+		frame.getContentPane().add(labelMostrarImgCliente);
+		
+		JLabel labelMostrarImgEjercicio = new JLabel("");
+		labelMostrarImgEjercicio.setBorder(BorderFactory.createLineBorder(Color.black));
+		labelMostrarImgEjercicio.setBounds(1299, 82, 123, 112);
+		frame.getContentPane().add(labelMostrarImgEjercicio);
 		
 		
 		
