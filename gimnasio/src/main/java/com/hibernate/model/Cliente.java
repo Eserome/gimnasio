@@ -31,18 +31,22 @@ public class Cliente {
 	
 	@Column(name="peso")
 	private int peso;
+	
+	@Column(name="picPath")
+	private String picPath;
 
 	public Cliente() {
 		super();
 	}
 	
-	public Cliente(String nombre, String apellidos, int edad, double altura, int peso) {
+	public Cliente(String nombre, String apellidos, int edad, double altura, int peso, String picPath) {
 		super();
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.edad = edad;
 		this.altura = altura;
 		this.peso = peso;
+		this.picPath = picPath;
 	}
 
 	public int getId() {
@@ -93,7 +97,14 @@ public class Cliente {
 		this.peso = peso;
 	}
 	
-	
+	public String getPicPath() {
+		return picPath;
+	}
+
+	public void setPicPath(String picPath) {
+		this.picPath = picPath;
+	}
+
 	
 	
 

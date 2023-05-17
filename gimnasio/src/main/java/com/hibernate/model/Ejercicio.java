@@ -29,16 +29,20 @@ public class Ejercicio {
 	@Column(name="cargaEnKg")
 	private int cargaEnKg;
 	
+	@Column(name="picPath")
+	private String picPath;
+	
 	public Ejercicio(){
 		super();
 	}
 
-	public Ejercicio(String nombre, int numeroDeSeries, int repeticiones, int cargaEnKg) {
+	public Ejercicio(String nombre, int numeroDeSeries, int repeticiones, int cargaEnKg, String picPath) {
 		super();
 		this.nombre = nombre;
 		this.numeroDeSeries = numeroDeSeries;
 		this.repeticiones = repeticiones;
 		this.cargaEnKg = cargaEnKg;
+		this.picPath = picPath;
 	}
 
 	public int getId() {
@@ -81,7 +85,14 @@ public class Ejercicio {
 		this.cargaEnKg = cargaEnKg;
 	}
 	
-	
+	public String getPicPath() {
+		return picPath;
+	}
+
+	public void setPicPath(String picPath) {
+		this.picPath = picPath;
+	}
+
 	
 	
 }

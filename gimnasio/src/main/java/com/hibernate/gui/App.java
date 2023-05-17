@@ -23,6 +23,7 @@ import com.hibernate.model.Ejercicio;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -31,7 +32,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Color;
@@ -68,7 +71,7 @@ public class App {
 	private JTextField textField_añadirClienteRutina;
 	private JTextField textField_añadirEjercicioCliente;
 	private JTextField picClientTextPath;
-	private JTextField textField;
+	private JTextField picExerciceTextPath;
 	
 
 	
@@ -97,6 +100,22 @@ public class App {
 		initialize();
 	}
 
+	public static void mostrarImagen(String picPath, JLabel labelImagen, int x, int y, int z, int e) {
+		try {
+            BufferedImage img = ImageIO.read(new File(picPath));
+
+            labelImagen.setBounds(x, y, z, e);
+
+            Image dimg = img.getScaledInstance(labelImagen.getWidth(), labelImagen.getHeight(),
+                    Image.SCALE_SMOOTH);
+            ImageIcon icon = new ImageIcon(dimg);
+
+            labelImagen.setIcon(icon);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+	}
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -138,22 +157,7 @@ public class App {
 		tablaEjercicios.getColumnModel().getColumn(2).setPreferredWidth(50);
 		tablaEjercicios.getColumnModel().getColumn(3).setPreferredWidth(20);
 		tablaEjercicios.getColumnModel().getColumn(4).setPreferredWidth(20);
-		tablaEjercicios.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				int index = tablaEjercicios.getSelectedRow();
-				TableModel model = tablaEjercicios.getModel();
-				textField_idEjercicio.setText(model.getValueAt(index, 0).toString());
-				textField_nombreEjercicio.setText(model.getValueAt(index, 1).toString());
-				textField_series.setText(model.getValueAt(index, 2).toString());
-				textField_repeticiones.setText(model.getValueAt(index, 3).toString());
-				textField_cargaEnKg.setText(model.getValueAt(index, 4).toString());
-				textField_añadirEjercicioCliente.setText(model.getValueAt(index, 1).toString() + ":" + model.getValueAt(index, 0).toString());
-				
-				
-				
-			}
-		});
+		
 		
 		picClientTextPath = new JTextField();
 		picClientTextPath.setBounds(323, 335, 183, 24);
@@ -168,22 +172,6 @@ public class App {
 		tablaClientes.getColumnModel().getColumn(3).setPreferredWidth(20);
 		tablaClientes.getColumnModel().getColumn(4).setPreferredWidth(20);
 		tablaClientes.getColumnModel().getColumn(5).setPreferredWidth(20);
-		tablaClientes.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				int index = tablaClientes.getSelectedRow();
-				TableModel model = tablaClientes.getModel();
-				
-				textField_idCliente.setText(model.getValueAt(index, 0).toString());
-				textField_nombreCliente.setText(model.getValueAt(index, 1).toString());
-				textField_apellidosCliente.setText(model.getValueAt(index, 2).toString());
-				textField_edad.setText(model.getValueAt(index, 3).toString());
-				textField_altura.setText(model.getValueAt(index, 4).toString());
-				textField_peso.setText(model.getValueAt(index, 5).toString());
-				textField_añadirClienteRutina.setText(model.getValueAt(index, 1).toString() + ":" +  model.getValueAt(index, 0).toString());
-				
-			}
-		});
 		
 		JTable tablaCE = new JTable(modelCE);
 		
@@ -280,7 +268,7 @@ public class App {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					
-					Cliente s = new Cliente(textField_nombreCliente.getText(),textField_apellidosCliente.getText(), Integer.parseInt(textField_edad.getText()),Double.parseDouble(textField_altura.getText()),Integer.parseInt(textField_peso.getText()));
+					Cliente s = new Cliente(textField_nombreCliente.getText(),textField_apellidosCliente.getText(), Integer.parseInt(textField_edad.getText()),Double.parseDouble(textField_altura.getText()),Integer.parseInt(textField_peso.getText()),picClientTextPath.getText());
 					ClienteDAO.insertCliente(s);
 					btnActualizarTabla.doClick();
 					
@@ -294,24 +282,7 @@ public class App {
 		frame.getContentPane().add(btnGuardar);
 		
 		JButton btnActualizar = new JButton("Actualizar");
-		btnActualizar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					
-					Cliente c = ClienteDAO.selectClienteByID(Integer.valueOf(textField_idCliente.getText()));
-					c.setNombre(textField_nombreCliente.getText());
-					c.setApellidos(textField_apellidosCliente.getText());
-					c.setEdad(Integer.valueOf(Integer.parseInt(textField_edad.getText())));
-					c.setAltura(Double.parseDouble(textField_altura.getText()));
-					c.setPeso(Integer.parseInt(textField_peso.getText()));
-					ClienteDAO.updateCliente(c);
-					btnActualizarTabla.doClick();
-					
-				} catch (Exception e) {
-					System.out.println(e);
-				}
-			}
-		});
+		
 		btnActualizar.setBounds(221, 371, 175, 32);
 		frame.getContentPane().add(btnActualizar);
 		
@@ -338,15 +309,7 @@ public class App {
 		frame.getContentPane().add(lblClientes);
 		
 		JButton buttonAñadirImagenCliente = new JButton("");
-		buttonAñadirImagenCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser chooser = new JFileChooser();
-		        chooser.showOpenDialog(null);
-		        File f= chooser.getSelectedFile();
-		        String fileName= f.getAbsolutePath();
-		        picClientTextPath.setText(fileName);
-			}
-		});
+		
 		buttonAñadirImagenCliente.setPreferredSize(new Dimension(15, 10));
 		buttonAñadirImagenCliente.setBounds(516, 335, 53, 24);
 		frame.getContentPane().add(buttonAñadirImagenCliente);
@@ -369,7 +332,7 @@ public class App {
 		btnGuardar_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				Ejercicio ej = new Ejercicio(textField_nombreEjercicio.getText(),Integer.parseInt(textField_series.getText()), Integer.parseInt(textField_repeticiones.getText()),Integer.parseInt(textField_cargaEnKg.getText()));
+				Ejercicio ej = new Ejercicio(textField_nombreEjercicio.getText(),Integer.parseInt(textField_series.getText()), Integer.parseInt(textField_repeticiones.getText()),Integer.parseInt(textField_cargaEnKg.getText()),picExerciceTextPath.getText());
 				EjercicioDAO.insertEjercicio(ej);
 				btnActualizarTabla.doClick();
 			}
@@ -378,19 +341,7 @@ public class App {
 		frame.getContentPane().add(btnGuardar_1);
 		
 		JButton btnActualizar_1 = new JButton("Actualizar");
-		btnActualizar_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-				Ejercicio ej = EjercicioDAO.selectEjercicioByID(Integer.valueOf(textField_idEjercicio.getText()));
-				ej.setNombre(textField_nombreEjercicio.getText());
-				ej.setNumeroDeSeries(Integer.parseInt(textField_series.getText()));
-				ej.setRepeticiones(Integer.valueOf(Integer.parseInt(textField_repeticiones.getText())));
-				ej.setCargaEnKg(Integer.parseInt(textField_cargaEnKg.getText()));
-				EjercicioDAO.updateEjercicio(ej);
-				btnActualizarTabla.doClick();
-				
-			}
-		});
+		
 		btnActualizar_1.setBounds(771, 371, 183, 32);
 		frame.getContentPane().add(btnActualizar_1);
 		
@@ -406,6 +357,7 @@ public class App {
 		frame.getContentPane().add(btnBorrar_1);
 		
 		JButton buttonAñadirImagenEjercicio = new JButton("");
+		
 		buttonAñadirImagenEjercicio.setBounds(1074, 335, 53, 24);
 		frame.getContentPane().add(buttonAñadirImagenEjercicio);
 		
@@ -660,10 +612,10 @@ public class App {
 		lblImagenDelEjercicio.setBounds(751, 339, 146, 15);
 		frame.getContentPane().add(lblImagenDelEjercicio);
 		
-		textField = new JTextField();
-		textField.setColumns(10);
-		textField.setBounds(902, 337, 160, 24);
-		frame.getContentPane().add(textField);
+		picExerciceTextPath = new JTextField();
+		picExerciceTextPath.setColumns(10);
+		picExerciceTextPath.setBounds(902, 337, 160, 24);
+		frame.getContentPane().add(picExerciceTextPath);
 		
 		JLabel labelImagenEjercicio = new JLabel("");
 		labelImagenEjercicio.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -681,9 +633,110 @@ public class App {
 		frame.getContentPane().add(labelMostrarImgEjercicio);
 		
 		
+		buttonAñadirImagenCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser chooser = new JFileChooser();
+		        chooser.showOpenDialog(null);
+		        File f= chooser.getSelectedFile();
+		        String fileName= f.getAbsolutePath();
+		        picClientTextPath.setText(fileName);
+		        
+		        mostrarImagen(picClientTextPath.getText(),labelImagenCliente,33, 238, 132, 123); 	
+		        
+			}
+		});
 		
+		buttonAñadirImagenEjercicio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+		        chooser.showOpenDialog(null);
+		        File f= chooser.getSelectedFile();
+		        String fileName= f.getAbsolutePath();
+		        picExerciceTextPath.setText(fileName);
+		        
+		        mostrarImagen(picExerciceTextPath.getText(),labelImagenEjercicio,591, 236, 132, 123);
+		        
+			}
+		});
 		
+		tablaClientes.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int index = tablaClientes.getSelectedRow();
+				TableModel model = tablaClientes.getModel();
+				
+				textField_idCliente.setText(model.getValueAt(index, 0).toString());
+				textField_nombreCliente.setText(model.getValueAt(index, 1).toString());
+				textField_apellidosCliente.setText(model.getValueAt(index, 2).toString());
+				textField_edad.setText(model.getValueAt(index, 3).toString());
+				textField_altura.setText(model.getValueAt(index, 4).toString());
+				textField_peso.setText(model.getValueAt(index, 5).toString());
+				textField_añadirClienteRutina.setText(model.getValueAt(index, 1).toString() + ":" +  model.getValueAt(index, 0).toString());
+				picClientTextPath.setText(ClienteDAO.selectClienteByID(Integer.parseInt(textField_idCliente.getText())).getPicPath());
+				
+				mostrarImagen(ClienteDAO.selectClienteByID(Integer.parseInt(textField_idCliente.getText())).getPicPath(), labelMostrarImgCliente , 1161, 82, 123, 112);
+				mostrarImagen(picClientTextPath.getText(),labelImagenCliente,33, 238, 132, 123); 
+				
+			}
+		});
 		
+		tablaEjercicios.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int index = tablaEjercicios.getSelectedRow();
+				TableModel model = tablaEjercicios.getModel();
+				textField_idEjercicio.setText(model.getValueAt(index, 0).toString());
+				textField_nombreEjercicio.setText(model.getValueAt(index, 1).toString());
+				textField_series.setText(model.getValueAt(index, 2).toString());
+				textField_repeticiones.setText(model.getValueAt(index, 3).toString());
+				textField_cargaEnKg.setText(model.getValueAt(index, 4).toString());
+				textField_añadirEjercicioCliente.setText(model.getValueAt(index, 1).toString() + ":" + model.getValueAt(index, 0).toString());
+				
+				Ejercicio e1 = EjercicioDAO.selectEjercicioByID(Integer.parseInt(textField_idEjercicio.getText()));
+				if(!e1.getPicPath().isEmpty()) {
+					picExerciceTextPath.setText(e1.getPicPath());
+					mostrarImagen(EjercicioDAO.selectEjercicioByID(Integer.parseInt(textField_idEjercicio.getText())).getPicPath(),labelImagenEjercicio,591, 236, 132, 123);
+					mostrarImagen(picExerciceTextPath.getText(),labelMostrarImgEjercicio,1299, 82, 123, 112);
+				} else {
+					labelImagenEjercicio.setIcon(null);
+				}
+			}
+		});
+		
+		btnActualizar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					
+					Cliente c = ClienteDAO.selectClienteByID(Integer.valueOf(textField_idCliente.getText()));
+					c.setNombre(textField_nombreCliente.getText());
+					c.setApellidos(textField_apellidosCliente.getText());
+					c.setEdad(Integer.valueOf(Integer.parseInt(textField_edad.getText())));
+					c.setAltura(Double.parseDouble(textField_altura.getText()));
+					c.setPeso(Integer.parseInt(textField_peso.getText()));
+					c.setPicPath(picClientTextPath.getText());
+					ClienteDAO.updateCliente(c);
+					btnActualizarTabla.doClick();
+					
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+			}
+		});
+		
+		btnActualizar_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				Ejercicio ej = EjercicioDAO.selectEjercicioByID(Integer.valueOf(textField_idEjercicio.getText()));
+				ej.setNombre(textField_nombreEjercicio.getText());
+				ej.setNumeroDeSeries(Integer.parseInt(textField_series.getText()));
+				ej.setRepeticiones(Integer.valueOf(Integer.parseInt(textField_repeticiones.getText())));
+				ej.setCargaEnKg(Integer.parseInt(textField_cargaEnKg.getText()));
+				ej.setPicPath(picExerciceTextPath.toString());
+				EjercicioDAO.updateEjercicio(ej);
+				btnActualizarTabla.doClick();
+				
+			}
+		});
 		
 		
 		
