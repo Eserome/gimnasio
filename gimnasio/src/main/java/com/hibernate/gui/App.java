@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -266,14 +268,47 @@ public class App {
 		JButton btnGuardar = new JButton("Añadir");
 		btnGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				boolean todoOk = false;
 				try {
+					Pattern patternAltura = Pattern.compile("^\\d?\\.\\d{1,2}$");
+					Matcher matcherAltura = patternAltura.matcher(textField_altura.getText());
+					double altura = Double.parseDouble(textField_altura.getText());
 					
-					Cliente s = new Cliente(textField_nombreCliente.getText(),textField_apellidosCliente.getText(), Integer.parseInt(textField_edad.getText()),Double.parseDouble(textField_altura.getText()),Integer.parseInt(textField_peso.getText()),picClientTextPath.getText());
-					ClienteDAO.insertCliente(s);
-					btnActualizarTabla.doClick();
+					Pattern patternEdad = Pattern.compile("^\\d{1,2}$");
+					Matcher matcherEdad = patternEdad.matcher(textField_altura.getText());
+					int edad = Integer.parseInt(textField_edad.getText());
 					
-				} catch (Exception e) {
-					System.out.println(e);
+					if(matcherAltura.matches()) {
+							if( altura < 2.99 && altura > 0.50 ) {
+								todoOk=true;
+							} else {
+								todoOk=false;
+								JOptionPane.showMessageDialog(null, "Fuera de los limites permitidos: (0.50-2.99)");
+							}
+						
+						} else {
+							todoOk=false;
+							JOptionPane.showMessageDialog(null, "El formato permitido es (0.50 a 2.99)");
+						}
+					if(matcherEdad.matches()) {
+							if(edad > 18 && edad < 99) {
+								todoOk=true;
+							} else {
+								todoOk=false;
+								JOptionPane.showMessageDialog(null, "La edad está fuera de los rangos (18-99)");
+							}
+					} else {
+						
+					}
+					
+					if(todoOk) {
+						Cliente s = new Cliente(textField_nombreCliente.getText(),textField_apellidosCliente.getText(), Integer.parseInt(textField_edad.getText()),Double.parseDouble(textField_altura.getText()),Integer.parseInt(textField_peso.getText()),picClientTextPath.getText());
+						ClienteDAO.insertCliente(s);
+						btnActualizarTabla.doClick();
+					}
+					
+				} catch (NumberFormatException e) {
+					JOptionPane.showMessageDialog(null, "El formato de la altura permitido es (1.23)");
 				}
 				
 			}
@@ -291,8 +326,9 @@ public class App {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					
-					Cliente s = ClienteDAO.selectClienteByID(Integer.valueOf(textField_idCliente.getText()));
-					ClienteDAO.deleteCliente(s.getId());
+							Cliente s = ClienteDAO.selectClienteByID(Integer.valueOf(textField_idCliente.getText()));
+							ClienteDAO.deleteCliente(s.getId());
+						
 					btnActualizarTabla.doClick();
 					
 				} catch (Exception e) {
@@ -328,17 +364,22 @@ public class App {
 		lblClientes_1.setBounds(592, 12, 117, 32);
 		frame.getContentPane().add(lblClientes_1);
 		
-		JButton btnGuardar_1 = new JButton("Añadir");
-		btnGuardar_1.addActionListener(new ActionListener() {
+		JButton btnGuardarEjercicio = new JButton("Añadir");
+		btnGuardarEjercicio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				Ejercicio ej = new Ejercicio(textField_nombreEjercicio.getText(),Integer.parseInt(textField_series.getText()), Integer.parseInt(textField_repeticiones.getText()),Integer.parseInt(textField_cargaEnKg.getText()),picExerciceTextPath.getText());
-				EjercicioDAO.insertEjercicio(ej);
-				btnActualizarTabla.doClick();
+				
+						Ejercicio ej = new Ejercicio(textField_nombreEjercicio.getText(),Integer.parseInt(textField_series.getText()), Integer.parseInt(textField_repeticiones.getText()),Integer.parseInt(textField_cargaEnKg.getText()),picExerciceTextPath.getText());
+						EjercicioDAO.insertEjercicio(ej);
+						btnActualizarTabla.doClick();
+					
+				
+				
+				
 			}
 		});
-		btnGuardar_1.setBounds(591, 371, 168, 32);
-		frame.getContentPane().add(btnGuardar_1);
+		btnGuardarEjercicio.setBounds(591, 371, 168, 32);
+		frame.getContentPane().add(btnGuardarEjercicio);
 		
 		JButton btnActualizar_1 = new JButton("Actualizar");
 		
@@ -525,8 +566,8 @@ public class App {
 		textField_idEjercicio.setBounds(1090, 238, 37, 25);
 		frame.getContentPane().add(textField_idEjercicio);
 		
-		JButton btnAñadir= new JButton("Añadir");
-		btnAñadir.addActionListener(new ActionListener() {
+		JButton btnAñadirRutina= new JButton("Añadir");
+		btnAñadirRutina.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				String cliente_id = textField_añadirClienteRutina.getText();
@@ -540,8 +581,8 @@ public class App {
 				btnActualizarTabla.doClick();
 			}
 		});
-		btnAñadir.setBounds(1443, 59, 80, 135);
-		frame.getContentPane().add(btnAñadir);
+		btnAñadirRutina.setBounds(1443, 59, 80, 135);
+		frame.getContentPane().add(btnAñadirRutina);
 		
 		tablaCE.addMouseListener(new MouseAdapter() {
 			@Override
@@ -674,8 +715,17 @@ public class App {
 				textField_añadirClienteRutina.setText(model.getValueAt(index, 1).toString() + ":" +  model.getValueAt(index, 0).toString());
 				picClientTextPath.setText(ClienteDAO.selectClienteByID(Integer.parseInt(textField_idCliente.getText())).getPicPath());
 				
-				mostrarImagen(ClienteDAO.selectClienteByID(Integer.parseInt(textField_idCliente.getText())).getPicPath(), labelMostrarImgCliente , 1161, 82, 123, 112);
-				mostrarImagen(picClientTextPath.getText(),labelImagenCliente,33, 238, 132, 123); 
+				Cliente c1 = ClienteDAO.selectClienteByID(Integer.parseInt(textField_idCliente.getText()));
+				if(c1.getPicPath()!=null) {
+					picClientTextPath.setText(c1.getPicPath());
+					mostrarImagen(ClienteDAO.selectClienteByID(Integer.parseInt(textField_idCliente.getText())).getPicPath(), labelMostrarImgCliente , 1161, 82, 123, 112);
+					mostrarImagen(picClientTextPath.getText(),labelImagenCliente,33, 238, 132, 123); 
+				} else {
+					labelImagenCliente.setIcon(null);
+					labelMostrarImgCliente.setIcon(null);
+				}
+				
+				
 				
 			}
 		});
@@ -691,14 +741,16 @@ public class App {
 				textField_repeticiones.setText(model.getValueAt(index, 3).toString());
 				textField_cargaEnKg.setText(model.getValueAt(index, 4).toString());
 				textField_añadirEjercicioCliente.setText(model.getValueAt(index, 1).toString() + ":" + model.getValueAt(index, 0).toString());
+				picExerciceTextPath.setText(EjercicioDAO.selectEjercicioByID(Integer.parseInt(textField_idEjercicio.getText())).getPicPath());
 				
 				Ejercicio e1 = EjercicioDAO.selectEjercicioByID(Integer.parseInt(textField_idEjercicio.getText()));
-				if(!e1.getPicPath().isEmpty()) {
+				if(e1.getPicPath()!=null) {
 					picExerciceTextPath.setText(e1.getPicPath());
 					mostrarImagen(EjercicioDAO.selectEjercicioByID(Integer.parseInt(textField_idEjercicio.getText())).getPicPath(),labelImagenEjercicio,591, 236, 132, 123);
 					mostrarImagen(picExerciceTextPath.getText(),labelMostrarImgEjercicio,1299, 82, 123, 112);
 				} else {
 					labelImagenEjercicio.setIcon(null);
+					labelMostrarImgEjercicio.setIcon(null);
 				}
 			}
 		});
