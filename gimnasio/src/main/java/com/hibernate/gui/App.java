@@ -21,7 +21,6 @@ import com.hibernate.model.CE;
 import com.hibernate.model.Cliente;
 import com.hibernate.model.Ejercicio;
 
-
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -53,8 +52,6 @@ import java.awt.event.ItemEvent;
 import javax.swing.JList;
 import java.awt.Dimension;
 
-
-
 public class App {
 
 	private JFrame frame;
@@ -74,11 +71,7 @@ public class App {
 	private JTextField textField_añadirEjercicioCliente;
 	private JTextField picClientTextPath;
 	private JTextField picExerciceTextPath;
-	
 
-	
-	
-	
 	/**
 	 * Launch the application.
 	 */
@@ -102,6 +95,161 @@ public class App {
 		initialize();
 	}
 
+	public static boolean comprobarValidezCamposEjercicio(JTextField textField_nombreEjercicio, JTextField textField_cargaEnKg, JTextField textField_repeticiones, JTextField textField_series, JTextField textField_nombreCliente, JTextField textField_apellidosCliente) {
+		boolean todoOk = false;
+		
+		Pattern patternNombre = Pattern.compile("^\\w{1,12}$");
+		Matcher matcherNombre = patternNombre.matcher(textField_nombreEjercicio.getText());
+		String nombre = textField_nombreEjercicio.getText();
+		
+		Pattern patternCarga = Pattern.compile("^\\d{1,3}$");
+		Matcher matcherCarga = patternCarga.matcher(textField_cargaEnKg.getText());
+		int carga = Integer.parseInt(textField_cargaEnKg.getText());
+		
+		Pattern patternRepeticiones = Pattern.compile("^\\d{1,3}$");
+		Matcher matcherRepeticiones = patternRepeticiones.matcher(textField_repeticiones.getText());
+		int repeticiones = Integer.parseInt(textField_repeticiones.getText());
+		
+		Pattern patternSeries = Pattern.compile("^\\d{1,3}$");
+		Matcher matcherSeries = patternCarga.matcher(textField_series.getText());
+		int series = Integer.parseInt(textField_series.getText());
+		
+		if(textField_nombreCliente != null){
+			todoOk = true;
+		}else {
+			todoOk = false;
+			JOptionPane.showMessageDialog(null, "El campo nombre está vacío");
+		}
+		
+		if(textField_apellidosCliente != null){
+			todoOk = true;
+		}else {
+			todoOk = false;
+			JOptionPane.showMessageDialog(null, "El campo apellido está vacío");
+		}
+		
+		
+		if(matcherNombre.matches()) {
+				todoOk=true;
+		} else {
+			todoOk=false;
+			JOptionPane.showMessageDialog(null, "El nombre del ejercicio debe contener máximo 12 carácteres");
+		}
+		if(matcherCarga.matches()) {
+				if(carga >= 0 && carga <= 256) {
+					todoOk=true;
+				} else {
+					todoOk=false;
+					JOptionPane.showMessageDialog(null, "La carga está fuera de los rangos (0-256) KG");
+				}
+		} else {
+			todoOk = false;
+			JOptionPane.showMessageDialog(null, "La carga debe estar comprendida entre 0-256 KG");
+		}
+		if(matcherRepeticiones.matches() && matcherSeries.matches()) {
+			if((repeticiones >= 0 && repeticiones <= 100) || (series >= 0 && series <= 100)) {
+				todoOk=true;
+			} else {
+				todoOk=false;
+				JOptionPane.showMessageDialog(null, "Las repeticiones o las series están fuera de los rangos (0-100)");
+			}
+	} else {
+		todoOk = false;
+		JOptionPane.showMessageDialog(null, "Las repeticiones y las series deben estar comprendidas entre 0 y 100");
+	}
+		
+		
+		return todoOk;
+			
+		
+		
+	}
+	
+	public static boolean comprobarValidezCamposCliente(JTextField textField_altura, JTextField textField_edad,
+			JTextField textField_peso, JTextField textField_nombreCliente, JTextField textField_apellidosCliente,
+			JTextField picClientTextPath) {
+		boolean todoOk = false;
+
+		Pattern patternComprobarNumero = Pattern.compile("^\\d+$");
+		Matcher matcherNumero = patternComprobarNumero.matcher(textField_edad.getText());
+		boolean esNumero = matcherNumero.matches();
+		
+		Pattern patternAltura = Pattern.compile("^\\d?\\.?\\d{1,2}$");
+		Matcher matcherAltura = patternAltura.matcher(textField_altura.getText());
+		double altura = Double.parseDouble(textField_altura.getText());
+
+		
+		
+		//TO DO : PONER RETURN PARA QUE NO SE ME CONCATENEN ERRORES
+		
+		
+
+		if (!textField_nombreCliente.getText().isEmpty()) {
+			todoOk = true;
+		} else {
+			todoOk = false;
+			JOptionPane.showMessageDialog(null, "El campo nombre está vacío");
+			return false;
+		}
+
+		if (!textField_apellidosCliente.getText().isEmpty()) {
+			todoOk = true;
+		} else {
+			todoOk = false;
+			JOptionPane.showMessageDialog(null, "El campo apellido está vacío");
+			return false;
+		}
+
+		if (matcherAltura.matches() || !textField_altura.getText().isEmpty()) {
+			if (altura < 2.99 && altura > 0.50) {
+				todoOk = true;
+			} else {
+				todoOk = false;
+				JOptionPane.showMessageDialog(null, "Altura fuera de los limites permitidos: (0.50-2.99)");
+			}
+		} else {
+			todoOk = false;
+			JOptionPane.showMessageDialog(null, "El formato de la altura permitido es (0.50 a 2.99)");
+		}
+		
+		Pattern patternEdad = Pattern.compile("^\\d{1,2}$");
+		Matcher matcherEdad = patternEdad.matcher(textField_edad.getText());
+		int edad = 0;
+		if(esNumero) {
+			edad = Integer.parseInt(textField_edad.getText());
+		} else {
+			JOptionPane.showMessageDialog(null, "El campo edad no está rellenado con un dato numérico");
+		}
+		
+		if (matcherEdad.matches() || !textField_edad.getText().isEmpty()) {
+			if (edad >= 18 && edad <= 99) {
+				todoOk = true;
+			} else {
+				todoOk = false;
+				JOptionPane.showMessageDialog(null, "La edad está fuera de los rangos (18-99)");
+			}
+		
+		}
+		
+		Pattern patternPeso = Pattern.compile("^\\d{1,3}$");
+		Matcher matcherPeso = patternEdad.matcher(textField_peso.getText());
+		int peso = Integer.parseInt(textField_peso.getText());
+		
+		if (matcherPeso.matches() || !textField_peso.getText().isEmpty()) {
+			if (peso >= 20 && peso <= 256) {
+				todoOk = true;
+			} else {
+				todoOk = false;
+				JOptionPane.showMessageDialog(null, "El peso está fuera de los rangos (20-256) Kg");
+			}
+		} else {
+			todoOk = false;
+			JOptionPane.showMessageDialog(null, "El peso debe estar comprendido entre 20 y 256 Kg");
+		}
+
+		return todoOk;
+	}
+
 	public static void mostrarImagen(String picPath, JLabel labelImagen, int x, int y, int z, int e) {
 		try {
             BufferedImage img = ImageIO.read(new File(picPath));
@@ -117,7 +265,7 @@ public class App {
             e1.printStackTrace();
         }
 	}
-	
+
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -268,51 +416,21 @@ public class App {
 		JButton btnGuardar = new JButton("Añadir");
 		btnGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				boolean todoOk = false;
 				try {
-					Pattern patternAltura = Pattern.compile("^\\d?\\.\\d{1,2}$");
-					Matcher matcherAltura = patternAltura.matcher(textField_altura.getText());
-					double altura = Double.parseDouble(textField_altura.getText());
+					boolean valido = comprobarValidezCamposCliente(textField_altura, textField_edad, textField_peso, textField_nombreCliente, textField_apellidosCliente, picClientTextPath);
 					
-					Pattern patternEdad = Pattern.compile("^\\d{1,2}$");
-					Matcher matcherEdad = patternEdad.matcher(textField_altura.getText());
-					int edad = Integer.parseInt(textField_edad.getText());
-					
-					if(matcherAltura.matches()) {
-							if( altura < 2.99 && altura > 0.50 ) {
-								todoOk=true;
-							} else {
-								todoOk=false;
-								JOptionPane.showMessageDialog(null, "Fuera de los limites permitidos: (0.50-2.99)");
-							}
-						
-						} else {
-							todoOk=false;
-							JOptionPane.showMessageDialog(null, "El formato permitido es (0.50 a 2.99)");
-						}
-					if(matcherEdad.matches()) {
-							if(edad > 18 && edad < 99) {
-								todoOk=true;
-							} else {
-								todoOk=false;
-								JOptionPane.showMessageDialog(null, "La edad está fuera de los rangos (18-99)");
-							}
-					} else {
-						
-					}
-					
-					if(todoOk) {
+					if(valido) {
 						Cliente s = new Cliente(textField_nombreCliente.getText(),textField_apellidosCliente.getText(), Integer.parseInt(textField_edad.getText()),Double.parseDouble(textField_altura.getText()),Integer.parseInt(textField_peso.getText()),picClientTextPath.getText());
 						ClienteDAO.insertCliente(s);
 						btnActualizarTabla.doClick();
-					}
-					
+					} 
 				} catch (NumberFormatException e) {
-					JOptionPane.showMessageDialog(null, "El formato de la altura permitido es (1.23)");
+					JOptionPane.showMessageDialog(null, "Falta rellenar campos de Cliente");
 				}
-				
-			}
-		});
+					
+			
+		}});
+		
 		btnGuardar.setBounds(33, 371, 176, 32);
 		frame.getContentPane().add(btnGuardar);
 		
@@ -324,16 +442,11 @@ public class App {
 		JButton btnBorrar = new JButton("Borrar");
 		btnBorrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				try {
-					
-							Cliente s = ClienteDAO.selectClienteByID(Integer.valueOf(textField_idCliente.getText()));
-							ClienteDAO.deleteCliente(s.getId());
-						
-					btnActualizarTabla.doClick();
-					
-				} catch (Exception e) {
-					System.out.println(e);
-				}
+				
+				Cliente c = ClienteDAO.selectClienteByID(Integer.valueOf(textField_idCliente.getText()));
+				ClienteDAO.deleteCliente(c.getId());
+				btnActualizarTabla.doClick();
+				
 			}
 		});
 		btnBorrar.setBounds(408, 371, 161, 32);
@@ -368,10 +481,19 @@ public class App {
 		btnGuardarEjercicio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				
+				try {
+					boolean valido = comprobarValidezCamposEjercicio(textField_nombreEjercicio, textField_cargaEnKg, textField_repeticiones, textField_series, textField_nombreCliente, textField_apellidosCliente);
+					
+					if(valido) {
 						Ejercicio ej = new Ejercicio(textField_nombreEjercicio.getText(),Integer.parseInt(textField_series.getText()), Integer.parseInt(textField_repeticiones.getText()),Integer.parseInt(textField_cargaEnKg.getText()),picExerciceTextPath.getText());
 						EjercicioDAO.insertEjercicio(ej);
 						btnActualizarTabla.doClick();
+					}
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(null, "Falta rellenar campos del Ejercicio");
+				}
+				
+						
 					
 				
 				
@@ -759,6 +881,14 @@ public class App {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					
+					try {
+						boolean valido = comprobarValidezCamposCliente(textField_altura, textField_edad, textField_peso, textField_nombreCliente, textField_apellidosCliente, picClientTextPath);
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(null, "Faltan campos por completar");
+					
+				
+					}
+					
 					Cliente c = ClienteDAO.selectClienteByID(Integer.valueOf(textField_idCliente.getText()));
 					c.setNombre(textField_nombreCliente.getText());
 					c.setApellidos(textField_apellidosCliente.getText());
@@ -794,4 +924,4 @@ public class App {
 		
 		
 	}
-}
+	}
