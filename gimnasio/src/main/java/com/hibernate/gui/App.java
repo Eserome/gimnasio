@@ -94,7 +94,27 @@ public class App {
 	public App() {
 		initialize();
 	}
+	
+	public static String corregirAltura(String altura) {
+        Pattern pattern = Pattern.compile(",");
+        Matcher matcher = pattern.matcher(altura);
+        String alturaCorregida = matcher.replaceFirst(".");
+        return alturaCorregida;
+    }
 
+	public static boolean comprobarSiEsImagen(String picPath) {
+		Pattern patternImagen = Pattern.compile(".*\\.(jpg|jpeg|png|gif|bmp)$");
+        Matcher matcherImagen = patternImagen.matcher(picPath);
+		
+		if(matcherImagen.matches()) {
+			return true;
+		} else {
+			JOptionPane.showMessageDialog(null, "El archivo seleccionado para la imagen del cliente no está permitido (jpg|jpeg|png|gif|bmp)");
+			return false;
+		}
+		
+	}
+	
 	public static boolean comprobarValidezCamposEjercicio(JTextField textField_nombreEjercicio, JTextField textField_cargaEnKg, JTextField textField_repeticiones, JTextField textField_series) {
 		boolean todoOk = false;
 		
@@ -163,7 +183,7 @@ public class App {
 		
 	}
 	
-	public static boolean comprobarValidezCamposCliente(JTextField textField_altura, JTextField textField_edad,
+	public static boolean comprobarValidezCamposCliente(double altura, JTextField textField_altura, JTextField textField_edad,
 			JTextField textField_peso, JTextField textField_nombreCliente, JTextField textField_apellidosCliente,
 			JTextField picClientTextPath) {
 		boolean todoOk = false;
@@ -173,8 +193,7 @@ public class App {
 		boolean esNumero = matcherNumero.matches();
 		
 		Pattern patternAltura = Pattern.compile("^\\d?\\.?\\d{1,2}$");
-		Matcher matcherAltura = patternAltura.matcher(textField_altura.getText());
-		double altura = Double.parseDouble(textField_altura.getText());
+		Matcher matcherAltura = patternAltura.matcher(String.valueOf(altura));
 
 
 		if (!textField_nombreCliente.getText().isEmpty()) {
@@ -192,9 +211,10 @@ public class App {
 			JOptionPane.showMessageDialog(null, "El campo apellido está vacío");
 			return false;
 		}
-
+		
 		if (matcherAltura.matches() || !textField_altura.getText().isEmpty()) {
-			if (altura < 2.99 && altura > 0.50) {
+			
+			if (altura <= 2.99 && altura >= 0.50) {
 				todoOk = true;
 			} else {
 				todoOk = false;
@@ -230,7 +250,15 @@ public class App {
 		Pattern patternPeso = Pattern.compile("^\\d{1,3}$");
 		Matcher matcherPeso = patternEdad.matcher(textField_peso.getText());
 		
-		int peso = Integer.parseInt(textField_peso.getText());
+		int peso = 0;
+		try {
+			peso = Integer.parseInt(textField_peso.getText());
+
+		} catch(Exception e) {
+			JOptionPane.showMessageDialog(null, "Deberías introducir un valor numérico en el campo peso");
+			return false;
+		}
+	
 		matcherNumero = patternComprobarNumero.matcher(textField_peso.getText());
 		
 		if(matcherNumero.matches()  || !textField_peso.getText().isEmpty()) {
@@ -253,6 +281,11 @@ public class App {
 			return false;
 		}
 		
+		if(comprobarSiEsImagen(picClientTextPath.getText())) {
+			todoOk=true;
+		} else {
+			return false;
+		}
 		
 		
 			return todoOk;
@@ -428,7 +461,7 @@ public class App {
 		btnGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					boolean valido = comprobarValidezCamposCliente(textField_altura, textField_edad, textField_peso, textField_nombreCliente, textField_apellidosCliente, picClientTextPath);
+					boolean valido = comprobarValidezCamposCliente(Double.parseDouble(corregirAltura(textField_altura.getText())), textField_altura, textField_edad, textField_peso, textField_nombreCliente, textField_apellidosCliente, picClientTextPath);
 					
 					if(valido) {
 						Cliente s = new Cliente(textField_nombreCliente.getText(),textField_apellidosCliente.getText(), Integer.parseInt(textField_edad.getText()),Double.parseDouble(textField_altura.getText()),Integer.parseInt(textField_peso.getText()),picClientTextPath.getText());
@@ -849,7 +882,7 @@ public class App {
 				picClientTextPath.setText(ClienteDAO.selectClienteByID(Integer.parseInt(textField_idCliente.getText())).getPicPath());
 				
 				Cliente c1 = ClienteDAO.selectClienteByID(Integer.parseInt(textField_idCliente.getText()));
-				if(c1.getPicPath()!=null) {
+				if(comprobarSiEsImagen(c1.getPicPath())) {
 					picClientTextPath.setText(c1.getPicPath());
 					mostrarImagen(ClienteDAO.selectClienteByID(Integer.parseInt(textField_idCliente.getText())).getPicPath(), labelMostrarImgCliente , 1161, 82, 123, 112);
 					mostrarImagen(picClientTextPath.getText(),labelImagenCliente,33, 238, 132, 123); 
@@ -891,14 +924,15 @@ public class App {
 		btnActualizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 					try {
-						boolean valido = comprobarValidezCamposCliente(textField_altura, textField_edad, textField_peso, textField_nombreCliente, textField_apellidosCliente, picClientTextPath);
+						double altura = Double.parseDouble(corregirAltura(textField_altura.getText()));
+						boolean valido = comprobarValidezCamposCliente(altura, textField_altura, textField_edad, textField_peso, textField_nombreCliente, textField_apellidosCliente, picClientTextPath);
 					
 						if(valido) {
 							Cliente c = ClienteDAO.selectClienteByID(Integer.valueOf(textField_idCliente.getText()));
 							c.setNombre(textField_nombreCliente.getText());
 							c.setApellidos(textField_apellidosCliente.getText());
 							c.setEdad(Integer.valueOf(Integer.parseInt(textField_edad.getText())));
-							c.setAltura(Double.parseDouble(textField_altura.getText()));
+							c.setAltura(altura);
 							c.setPeso(Integer.parseInt(textField_peso.getText()));
 							c.setPicPath(picClientTextPath.getText());
 							ClienteDAO.updateCliente(c);
