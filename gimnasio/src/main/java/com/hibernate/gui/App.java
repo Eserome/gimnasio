@@ -115,37 +115,63 @@ public class App {
 		
 	}
 	
-	public static boolean comprobarValidezCamposEjercicio(JTextField textField_nombreEjercicio, JTextField textField_cargaEnKg, JTextField textField_repeticiones, JTextField textField_series) {
+	public static boolean comprobarValidezCamposEjercicio(JTextField textField_nombreEjercicio, JTextField textField_cargaEnKg, JTextField textField_repeticiones, JTextField textField_series, JTextField picExerciceTextPath) {
 		boolean todoOk = false;
 		
 		Pattern patternNombre = Pattern.compile("^\\w{1,12}$");
 		Matcher matcherNombre = patternNombre.matcher(textField_nombreEjercicio.getText());
 		String nombre = textField_nombreEjercicio.getText();
 		
-		Pattern patternCarga = Pattern.compile("^\\d{1,3}$");
-		Matcher matcherCarga = patternCarga.matcher(textField_cargaEnKg.getText());
-		int carga = Integer.parseInt(textField_cargaEnKg.getText());
-		
-		Pattern patternRepeticiones = Pattern.compile("^\\d{1,3}$");
-		Matcher matcherRepeticiones = patternRepeticiones.matcher(textField_repeticiones.getText());
-		int repeticiones = Integer.parseInt(textField_repeticiones.getText());
-		
-		Pattern patternSeries = Pattern.compile("^\\d{1,3}$");
-		Matcher matcherSeries = patternCarga.matcher(textField_series.getText());
-		int series = Integer.parseInt(textField_series.getText());
-		
-		if(textField_nombreEjercicio != null){
+
+		if(textField_nombreEjercicio.getText().isEmpty()){
 			todoOk = true;
 		}else {
-			todoOk = false;
 			JOptionPane.showMessageDialog(null, "El campo nombre del ejercicio está vacío");
 			return false;
 		}
 		
-		if(matcherNombre.matches()) {
+		Pattern patternComprobarNumero = Pattern.compile("^\\d+$");
+		Matcher matcherNumero = patternComprobarNumero.matcher(textField_cargaEnKg.getText());
+		boolean esNumero = matcherNumero.matches();
+		int carga = 0;
+		
+		if(esNumero) {
+			carga = Integer.parseInt(textField_cargaEnKg.getText());
+		} else {
+			JOptionPane.showMessageDialog(null, "El campo carga debería ser numérico");
+			return false;
+		}
+		Pattern patternCarga = Pattern.compile("^\\d{1,3}$");
+		Matcher matcherCarga = patternCarga.matcher(textField_cargaEnKg.getText());
+		
+		Pattern patternRepeticiones = Pattern.compile("^\\d{1,3}$");
+		Matcher matcherRepeticiones = patternRepeticiones.matcher(textField_repeticiones.getText());
+	
+		matcherNumero = patternComprobarNumero.matcher(textField_repeticiones.getText());
+		int repeticiones = 0;
+		if(esNumero) {
+			repeticiones = Integer.parseInt(textField_repeticiones.getText());
+		} else {
+			JOptionPane.showMessageDialog(null, "Las repeticiones deben de ser un valor numérico");
+			return false;
+		}
+		
+		
+		Pattern patternSeries = Pattern.compile("^\\d{1,3}$");
+		Matcher matcherSeries = patternCarga.matcher(textField_series.getText());
+		matcherNumero = patternComprobarNumero.matcher(textField_series.getText());
+		int series = 0;
+		if(esNumero) {
+			series = Integer.parseInt(textField_series.getText());
+		} else {
+			JOptionPane.showMessageDialog(null, "Deberías rellenar las series con un valor numérico");
+		}
+		
+		
+		
+		if(matcherNombre.matches() || !textField_repeticiones.getText().isEmpty()) {
 				todoOk=true;
 		} else {
-			todoOk=false;
 			JOptionPane.showMessageDialog(null, "El nombre del ejercicio debe contener máximo 12 carácteres");
 			return false;
 		}
@@ -153,12 +179,10 @@ public class App {
 				if(carga >= 0 && carga <= 256) {
 					todoOk=true;
 				} else {
-					todoOk=false;
 					JOptionPane.showMessageDialog(null, "La carga está fuera de los rangos (0-256) KG");
 					return false;
 				}
 		} else {
-			todoOk = false;
 			JOptionPane.showMessageDialog(null, "La carga debe estar comprendida entre 0-256 KG");
 			return false;
 		}
@@ -175,6 +199,15 @@ public class App {
 		JOptionPane.showMessageDialog(null, "Las repeticiones y las series deben estar comprendidas entre 0 y 100");
 		return false;
 	}
+		
+		if(comprobarSiEsImagen(picExerciceTextPath.getText())) {
+			todoOk=true;
+		} else if(picExerciceTextPath.getText().isEmpty()){
+			picExerciceTextPath.setText("/com/hibernate/gui/ejercicioInterrogante.png");
+			todoOk=true;
+		} else {
+			return false;
+		}
 		
 		
 		return todoOk;
@@ -282,6 +315,9 @@ public class App {
 		}
 		
 		if(comprobarSiEsImagen(picClientTextPath.getText())) {
+			todoOk=true;
+		} else if(picClientTextPath.getText().isEmpty()){
+			picClientTextPath.setText("/com/hibernate/gui/imagenSinAvatar.png");
 			todoOk=true;
 		} else {
 			return false;
@@ -526,7 +562,7 @@ public class App {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				try {
-					boolean valido = comprobarValidezCamposEjercicio(textField_nombreEjercicio, textField_cargaEnKg, textField_repeticiones, textField_series);
+					boolean valido = comprobarValidezCamposEjercicio(textField_nombreEjercicio, textField_cargaEnKg, textField_repeticiones, textField_series, picExerciceTextPath);
 					
 					if(valido) {
 						Ejercicio ej = new Ejercicio(textField_nombreEjercicio.getText(),Integer.parseInt(textField_series.getText()), Integer.parseInt(textField_repeticiones.getText()),Integer.parseInt(textField_cargaEnKg.getText()),picExerciceTextPath.getText());
@@ -882,7 +918,14 @@ public class App {
 				picClientTextPath.setText(ClienteDAO.selectClienteByID(Integer.parseInt(textField_idCliente.getText())).getPicPath());
 				
 				Cliente c1 = ClienteDAO.selectClienteByID(Integer.parseInt(textField_idCliente.getText()));
-				if(comprobarSiEsImagen(c1.getPicPath())) {
+				if(picClientTextPath.getText().compareTo("/com/hibernate/gui/imagenSinAvatar.png") == 0) {
+					labelMostrarImgCliente.setIcon(new ImageIcon(App.class.getResource("/com/hibernate/gui/imagenSinAvatar.png")));
+					ImageIcon icono = new ImageIcon(App.class.getResource("/com/hibernate/gui/imagenSinAvatar.png"));
+					
+					Image imagenReducida = icono.getImage().getScaledInstance(123, 123, 112);
+					labelMostrarImgCliente.setIcon(new ImageIcon(imagenReducida));
+					labelImagenCliente.setIcon(new ImageIcon(imagenReducida));
+				} else if(comprobarSiEsImagen(c1.getPicPath())) {
 					picClientTextPath.setText(c1.getPicPath());
 					mostrarImagen(ClienteDAO.selectClienteByID(Integer.parseInt(textField_idCliente.getText())).getPicPath(), labelMostrarImgCliente , 1161, 82, 123, 112);
 					mostrarImagen(picClientTextPath.getText(),labelImagenCliente,33, 238, 132, 123); 
@@ -899,26 +942,34 @@ public class App {
 		tablaEjercicios.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				int index = tablaEjercicios.getSelectedRow();
-				TableModel model = tablaEjercicios.getModel();
-				textField_idEjercicio.setText(model.getValueAt(index, 0).toString());
-				textField_nombreEjercicio.setText(model.getValueAt(index, 1).toString());
-				textField_series.setText(model.getValueAt(index, 2).toString());
-				textField_repeticiones.setText(model.getValueAt(index, 3).toString());
-				textField_cargaEnKg.setText(model.getValueAt(index, 4).toString());
-				textField_añadirEjercicioCliente.setText(model.getValueAt(index, 1).toString() + ":" + model.getValueAt(index, 0).toString());
-				picExerciceTextPath.setText(EjercicioDAO.selectEjercicioByID(Integer.parseInt(textField_idEjercicio.getText())).getPicPath());
 				
-				Ejercicio e1 = EjercicioDAO.selectEjercicioByID(Integer.parseInt(textField_idEjercicio.getText()));
-				if(e1.getPicPath()!=null) {
-					picExerciceTextPath.setText(e1.getPicPath());
-					mostrarImagen(EjercicioDAO.selectEjercicioByID(Integer.parseInt(textField_idEjercicio.getText())).getPicPath(),labelImagenEjercicio,591, 236, 132, 123);
-					mostrarImagen(picExerciceTextPath.getText(),labelMostrarImgEjercicio,1299, 82, 123, 112);
-				} else {
-					labelImagenEjercicio.setIcon(null);
-					labelMostrarImgEjercicio.setIcon(null);
-				}
-			}
+						int index = tablaEjercicios.getSelectedRow();
+						TableModel model = tablaEjercicios.getModel();
+						textField_idEjercicio.setText(model.getValueAt(index, 0).toString());
+						textField_nombreEjercicio.setText(model.getValueAt(index, 1).toString());
+						textField_series.setText(model.getValueAt(index, 2).toString());
+						textField_repeticiones.setText(model.getValueAt(index, 3).toString());
+						textField_cargaEnKg.setText(model.getValueAt(index, 4).toString());
+						textField_añadirEjercicioCliente.setText(model.getValueAt(index, 1).toString() + ":" + model.getValueAt(index, 0).toString());
+						picExerciceTextPath.setText(EjercicioDAO.selectEjercicioByID(Integer.parseInt(textField_idEjercicio.getText())).getPicPath());
+						
+						Ejercicio e1 = EjercicioDAO.selectEjercicioByID(Integer.parseInt(textField_idEjercicio.getText()));
+						if(picExerciceTextPath.getText().compareTo("/com/hibernate/gui/ejercicioInterrogante.png") == 0) {
+							labelMostrarImgEjercicio.setIcon(new ImageIcon(App.class.getResource("/com/hibernate/gui/ejercicioInterrogante.png")));
+							ImageIcon icono = new ImageIcon(App.class.getResource("/com/hibernate/gui/ejercicioInterrogante.png"));
+							
+							Image imagenReducida = icono.getImage().getScaledInstance(123, 123, 112);
+							labelMostrarImgEjercicio.setIcon(new ImageIcon(imagenReducida));
+							labelImagenEjercicio.setIcon(new ImageIcon(imagenReducida));
+						} else if(comprobarSiEsImagen(e1.getPicPath())) {
+							picExerciceTextPath.setText(e1.getPicPath());
+							mostrarImagen(EjercicioDAO.selectEjercicioByID(Integer.parseInt(textField_idEjercicio.getText())).getPicPath(), labelMostrarImgEjercicio , 1299, 82, 123, 112);
+							mostrarImagen(picExerciceTextPath.getText(),labelImagenEjercicio,591, 236, 132, 123); 
+						} else {
+							labelImagenEjercicio.setIcon(null);
+							labelMostrarImgEjercicio.setIcon(null);
+						}
+					}
 		});
 		
 		btnActualizar.addActionListener(new ActionListener() {
@@ -938,6 +989,23 @@ public class App {
 							ClienteDAO.updateCliente(c);
 							btnActualizarTabla.doClick();
 							
+							
+							if(picClientTextPath.getText().compareTo("/com/hibernate/gui/imagenSinAvatar.png") == 0) {
+								labelMostrarImgCliente.setIcon(new ImageIcon(App.class.getResource("/com/hibernate/gui/imagenSinAvatar.png")));
+								ImageIcon icono = new ImageIcon(App.class.getResource("/com/hibernate/gui/imagenSinAvatar.png"));
+								
+								Image imagenReducida = icono.getImage().getScaledInstance(123, 123, 112);
+								labelMostrarImgCliente.setIcon(new ImageIcon(imagenReducida));
+								labelImagenCliente.setIcon(new ImageIcon(imagenReducida));
+							} else if(comprobarSiEsImagen(c.getPicPath())) {
+								picClientTextPath.setText(c.getPicPath());
+								mostrarImagen(ClienteDAO.selectClienteByID(Integer.parseInt(textField_idCliente.getText())).getPicPath(), labelMostrarImgCliente , 1161, 82, 123, 112);
+								mostrarImagen(picClientTextPath.getText(),labelImagenCliente,33, 238, 132, 123); 
+							} else {
+								labelImagenCliente.setIcon(null);
+								labelMostrarImgCliente.setIcon(null);
+							}
+							
 						}
 					
 					
@@ -952,14 +1020,50 @@ public class App {
 		btnActualizar_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				Ejercicio ej = EjercicioDAO.selectEjercicioByID(Integer.valueOf(textField_idEjercicio.getText()));
-				ej.setNombre(textField_nombreEjercicio.getText());
-				ej.setNumeroDeSeries(Integer.parseInt(textField_series.getText()));
-				ej.setRepeticiones(Integer.valueOf(Integer.parseInt(textField_repeticiones.getText())));
-				ej.setCargaEnKg(Integer.parseInt(textField_cargaEnKg.getText()));
-				ej.setPicPath(picExerciceTextPath.toString());
-				EjercicioDAO.updateEjercicio(ej);
-				btnActualizarTabla.doClick();
+				try {
+					boolean valido = comprobarValidezCamposEjercicio(textField_nombreEjercicio, textField_cargaEnKg, textField_repeticiones, textField_series, picExerciceTextPath);
+				
+					if(valido) {
+
+						Ejercicio ej = EjercicioDAO.selectEjercicioByID(Integer.valueOf(textField_idEjercicio.getText()));
+						ej.setNombre(textField_nombreEjercicio.getText());
+						ej.setNumeroDeSeries(Integer.parseInt(textField_series.getText()));
+						ej.setRepeticiones(Integer.valueOf(Integer.parseInt(textField_repeticiones.getText())));
+						ej.setCargaEnKg(Integer.parseInt(textField_cargaEnKg.getText()));
+						ej.setPicPath(picExerciceTextPath.getText().toString());
+						EjercicioDAO.updateEjercicio(ej);
+						btnActualizarTabla.doClick();
+						
+						if(picExerciceTextPath.getText().compareTo("/com/hibernate/gui/ejercicioInterrogante.png") == 0) {
+							labelMostrarImgEjercicio.setIcon(new ImageIcon(App.class.getResource("/com/hibernate/gui/ejercicioInterrogante.png")));
+							ImageIcon icono = new ImageIcon(App.class.getResource("/com/hibernate/gui/ejercicioInterrogante.png"));
+							
+							Image imagenReducida = icono.getImage().getScaledInstance(123, 123, 112);
+							labelMostrarImgEjercicio.setIcon(new ImageIcon(imagenReducida));
+							labelImagenEjercicio.setIcon(new ImageIcon(imagenReducida));
+						} else if(comprobarSiEsImagen(ej.getPicPath())) {
+							picExerciceTextPath.setText(ej.getPicPath());
+							mostrarImagen(EjercicioDAO.selectEjercicioByID(Integer.parseInt(textField_idEjercicio.getText())).getPicPath(), labelMostrarImgEjercicio , 1299, 82, 123, 112);
+							mostrarImagen(picExerciceTextPath.getText(),labelImagenEjercicio,591, 236, 132, 123); 
+						} else {
+							labelImagenEjercicio.setIcon(null);
+							labelMostrarImgEjercicio.setIcon(null);
+						}
+					}
+					
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, "Faltan campos por rellenar");
+					System.out.println(e1);
+				}
+				
+				
+				
+				
+				
+				
+				
+				
+				
 				
 			}
 		});
