@@ -122,33 +122,40 @@ public class App {
 		Matcher matcherNombre = patternNombre.matcher(textField_nombreEjercicio.getText());
 		String nombre = textField_nombreEjercicio.getText();
 		
-
-		if(textField_nombreEjercicio.getText().isEmpty()){
-			todoOk = true;
-		}else {
-			JOptionPane.showMessageDialog(null, "El campo nombre del ejercicio está vacío");
-			return false;
-		}
-		
 		Pattern patternComprobarNumero = Pattern.compile("^\\d+$");
-		Matcher matcherNumero = patternComprobarNumero.matcher(textField_cargaEnKg.getText());
+		Matcher	matcherNumero = patternComprobarNumero.matcher(textField_repeticiones.getText());
 		boolean esNumero = matcherNumero.matches();
-		int carga = 0;
 		
-		if(esNumero) {
-			carga = Integer.parseInt(textField_cargaEnKg.getText());
-		} else {
-			JOptionPane.showMessageDialog(null, "El campo carga debería ser numérico");
-			return false;
-		}
 		Pattern patternCarga = Pattern.compile("^\\d{1,3}$");
 		Matcher matcherCarga = patternCarga.matcher(textField_cargaEnKg.getText());
 		
 		Pattern patternRepeticiones = Pattern.compile("^\\d{1,3}$");
 		Matcher matcherRepeticiones = patternRepeticiones.matcher(textField_repeticiones.getText());
-	
-		matcherNumero = patternComprobarNumero.matcher(textField_repeticiones.getText());
+		
+		Pattern patternSeries = Pattern.compile("^\\d{1,3}$");
+		Matcher matcherSeries = patternCarga.matcher(textField_series.getText());
+		
+		
+		/* Inicializando los valores de repeticiones, carga y series para poder luego asignarles el valor correspondiente si es del mismo tipo */
 		int repeticiones = 0;
+		int carga = 0;
+		int series = 0;
+		
+		/* Comprobación del campo nombre de ejercicio, si está relleno */
+		if(!textField_nombreEjercicio.getText().isEmpty()){
+			todoOk = true;
+		}else {
+			JOptionPane.showMessageDialog(null, "El campo nombre del ejercicio está vacío");
+			return false;
+		}
+
+		if(matcherNombre.matches()) {
+			todoOk=true;
+		} else {
+			JOptionPane.showMessageDialog(null, "El nombre del ejercicio debe contener máximo 12 carácteres");
+			return false;
+		}
+		
 		if(esNumero) {
 			repeticiones = Integer.parseInt(textField_repeticiones.getText());
 		} else {
@@ -156,25 +163,29 @@ public class App {
 			return false;
 		}
 		
-		
-		Pattern patternSeries = Pattern.compile("^\\d{1,3}$");
-		Matcher matcherSeries = patternCarga.matcher(textField_series.getText());
 		matcherNumero = patternComprobarNumero.matcher(textField_series.getText());
-		int series = 0;
+		esNumero = matcherNumero.matches();
+		
 		if(esNumero) {
 			series = Integer.parseInt(textField_series.getText());
 		} else {
 			JOptionPane.showMessageDialog(null, "Deberías rellenar las series con un valor numérico");
-		}
-		
-		
-		
-		if(matcherNombre.matches() || !textField_repeticiones.getText().isEmpty()) {
-				todoOk=true;
-		} else {
-			JOptionPane.showMessageDialog(null, "El nombre del ejercicio debe contener máximo 12 carácteres");
 			return false;
 		}
+		
+		matcherNumero = patternComprobarNumero.matcher(textField_cargaEnKg.getText());
+		esNumero = matcherNumero.matches();
+		
+		if(esNumero) {
+			carga = Integer.parseInt(textField_cargaEnKg.getText());
+		} else {
+			JOptionPane.showMessageDialog(null, "El campo carga debería ser numérico");
+			return false;
+		}
+		
+		
+		
+		
 		if(matcherCarga.matches()) {
 				if(carga >= 0 && carga <= 256) {
 					todoOk=true;
@@ -186,6 +197,7 @@ public class App {
 			JOptionPane.showMessageDialog(null, "La carga debe estar comprendida entre 0-256 KG");
 			return false;
 		}
+	
 		if(matcherRepeticiones.matches() && matcherSeries.matches()) {
 			if((repeticiones >= 0 && repeticiones <= 100) || (series >= 0 && series <= 100)) {
 				todoOk=true;
@@ -194,11 +206,11 @@ public class App {
 				JOptionPane.showMessageDialog(null, "Las repeticiones o las series están fuera de los rangos (0-100)");
 				return false;
 			}
-	} else {
-		todoOk = false;
-		JOptionPane.showMessageDialog(null, "Las repeticiones y las series deben estar comprendidas entre 0 y 100");
-		return false;
-	}
+		} else {
+			todoOk = false;
+			JOptionPane.showMessageDialog(null, "Las repeticiones y las series deben estar comprendidas entre 0 y 100");
+			return false;
+		}
 		
 		if(comprobarSiEsImagen(picExerciceTextPath.getText())) {
 			todoOk=true;
